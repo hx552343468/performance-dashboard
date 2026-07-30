@@ -241,7 +241,51 @@ to{opacity:1;transform:none}
 
 .detail-section>.section-title{margin:0 -16px;padding:0 16px;background:#fff;border-radius:8px 8px 0 0}
 
-.level-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:16px 0}
+.level-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:16px 0 20px}
+
+.dashboard-top-grid{display:grid;grid-template-columns:minmax(260px,.85fr) minmax(520px,2.15fr);gap:16px;margin:16px 0 20px}
+
+.total-performance-card{position:relative;display:flex;min-height:337px;padding:24px 26px;overflow:hidden;border-color:#edf1f6;background:#fff;box-shadow:0 4px 14px rgba(33,58,94,.04)}
+
+.total-performance-card::before{display:none}
+
+.total-performance-card::after{display:none}
+
+.total-performance-content{position:relative;z-index:1;display:flex;width:100%;flex-direction:column}
+
+.total-performance-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+
+.total-performance-head span{display:flex;align-items:center;gap:8px;color:#27354a;font-size:16px;font-weight:700}
+
+.total-performance-head i{width:8px;height:8px;border-radius:50%;background:#4b78ef}
+
+.total-performance-head small{color:#8d98a8;font-size:12px;font-weight:400}
+
+.total-performance-main{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:6px 0 22px;text-align:center}
+
+.total-performance-main span{display:inline-flex;align-items:center;justify-content:center;height:24px;padding:0 10px;border:1px solid #edf1f6;border-radius:999px;background:#f8fafc;color:#8390a3;font-size:12px;line-height:1}
+
+.total-performance-card .total-performance-main strong{margin-top:14px;color:#fa575a;font-size:36px;font-weight:800;line-height:1.05;letter-spacing:.2px}
+
+.total-performance-summary{display:grid;grid-template-columns:repeat(2,1fr);padding:16px 0 0;border-top:1px solid #edf1f6}
+
+.summary-item{min-width:0;padding:0 12px;border-left:1px solid #edf1f6;text-align:center}
+
+.summary-item:first-child{padding-left:0;border-left:0}
+
+.summary-item span{display:block;color:#98a3b3;font-size:12px;line-height:1.2;white-space:nowrap}
+
+.summary-item b{display:block;margin-top:8px;color:#536176;font-size:13px;line-height:1.2;white-space:nowrap}
+
+.summary-item .up{color:#f95559}
+
+.regional-performance-card{padding:21px}
+
+.p-level-grid{grid-template-columns:repeat(3,1fr)}
+
+.ranking-chart-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:16px 0 20px}
+
+.ranking-chart-card{min-height:330px;padding:21px}
 
 .level-card{position:relative;min-height:132px;padding:18px;overflow:hidden}
 
@@ -279,6 +323,10 @@ to{opacity:1;transform:none}
 
 .l-three{top:13%;left:36%}
 
+.l-four{top:24%;right:24%}
+
+.l-five{bottom:32%;left:31%}
+
 .under-legend{color:#747d88;font-size:11px;text-align:center}
 
 .under-legend i{display:inline-block;width:17px;height:9px;margin:0 4px 0 9px;border-radius:2px}
@@ -290,6 +338,8 @@ to{opacity:1;transform:none}
 .under-legend .yellow{background:#fac653}
 
 .under-legend .red{background:#ec6b70}
+
+.under-legend .teal{background:#5bc5a5}
 
 .bars{position:relative;height:302px;padding:24px 8px 0 31px;overflow:hidden}
 
@@ -326,6 +376,12 @@ to{opacity:1;transform:none}
 .metric-head b{font-size:17px}
 
 .wide-panel{gap:21px}
+
+.level-grid{grid-template-columns:repeat(2,1fr)}
+
+.dashboard-top-grid,.ranking-chart-grid{grid-template-columns:1fr}
+
+.total-performance-card{min-height:180px}
 
 }
 
@@ -421,6 +477,32 @@ to{opacity:1;transform:none}
 
 .page-tabs .tab-link{background:#fff;color:#6c7686;cursor:pointer}
 .page-tabs .tab-link:hover{color:#2f68d6}
+
+/* Keep the three agent ranking cards visually aligned. */
+.rank-grid{align-items:stretch}
+.summary-rank,.national{display:flex;min-height:420px;padding:18px;flex-direction:column;border-color:#edf1f6;background:#fff;box-shadow:none}
+.summary-rank header,.national header{display:flex;min-height:43px;align-items:flex-start;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:1px solid #f0f3f7}
+.summary-rank h3,.national h3{display:flex;align-items:center;margin:0;color:#27354a;font-size:15px;font-weight:700;line-height:1.35}
+.national h3{padding-bottom:0;border-bottom:0}
+.summary-rank header small{max-width:136px;color:#98a3b3;font-size:11px;line-height:1.35;text-align:right}
+.rank-total{margin-top:14px;padding:10px 12px;border:1px solid #f0f3f7;border-radius:6px;background:#f8fafc}
+.rank-total span{color:#98a3b3;font-size:12px}
+.rank-total strong{margin-left:7px;color:#27354a;font-size:22px;font-weight:700}
+.mini-bars,.national-list{flex:1;padding-top:13px}
+.mini-bars div,.national-row{min-height:34px;padding:6px 0;border-bottom:1px solid #f1f4f8}
+.mini-bars div:last-child,.national-row:last-child{border-bottom:0}
+.mini-bars label{width:104px;margin-right:10px;color:#4d5b70;font-size:11px;text-align:right}
+.mini-bars i,.national-progress i{height:8px;border:1px solid #e3e9f2;background:#e9eef6}
+.mini-bars b,.national-progress b{background:#527cf0}
+.national-row{display:grid;grid-template-columns:20px minmax(92px,.9fr) minmax(110px,1.6fr) auto;gap:8px;align-items:center}
+.national-row span{margin:0;color:#4d5b70;font-size:11px}
+.national-row strong{margin:0;color:#26344b;font-size:11px;font-weight:700;white-space:nowrap}
+.national-progress{min-width:0;margin:0}
+.summary-row{display:grid!important;grid-template-columns:20px minmax(92px,.9fr) minmax(110px,1.6fr) auto;gap:8px;align-items:center;height:auto!important;min-height:34px}
+.summary-place{margin:0!important}
+.mini-bars label{width:auto;margin:0;overflow:hidden;color:#4d5b70;font-size:11px;text-align:left;text-overflow:ellipsis;white-space:nowrap}
+.summary-row i{min-width:0}
+.summary-amount{margin:0;color:#26344b;font-size:11px;font-weight:700;white-space:nowrap}
 
 /* P5 ranking list page, matched to the supplied admin-table reference. */
 .ranking-page{min-height:calc(100vh - 83px);padding:20px;background:#eef1f6}

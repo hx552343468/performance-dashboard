@@ -8,6 +8,44 @@ const regional = [
 ];
 const fifthRegion = { name: "第五大区", value: 6, color: "#5bc5a5" };
 
+const financeRegionTotals = {
+  "西部大区": 107910,
+  "中部大区": 73010,
+  "东部大区": 14900,
+  "东南大区": 9860,
+  "第五大区": 6200,
+};
+
+const operationRegionTotals = {
+  "西部大区": 112680,
+  "中部大区": 76840,
+  "东部大区": 15180,
+  "东南大区": 10360,
+  "第五大区": 7350,
+};
+
+const formatShortCurrency = value => `¥${Number(value || 0).toLocaleString("zh-CN")}`;
+const stripCurrencyDecimal = value => String(value || "").replace(/\.00$/, "");
+const regionPerformanceItems = [
+  { name: "西部大区", color: "#5573c8", legendClass: "blue", calloutClass: "l-two" },
+  { name: "中部大区", color: "#92cc72", legendClass: "green", calloutClass: "l-one" },
+  { name: "东部大区", color: "#fac653", legendClass: "yellow", calloutClass: "l-three" },
+  { name: "东南大区", color: "#ec6b70", legendClass: "red", calloutClass: "l-four" },
+  { name: "第五大区", color: "#5bc5a5", legendClass: "teal", calloutClass: "l-five" },
+];
+const formatRegionAmount = value => `${Number(value || 0).toLocaleString("zh-CN")}元`;
+const buildRegionPieGradient = (totals = {}) => {
+  const sum = regionPerformanceItems.reduce((total, item) => total + Number(totals[item.name] || 0), 0);
+  if (!sum) return "conic-gradient(#eef2f7 0 100%)";
+  let current = 0;
+  return `conic-gradient(${regionPerformanceItems.map(item => {
+    const value = Number(totals[item.name] || 0);
+    const start = current;
+    current += value / sum * 100;
+    return `${item.color} ${start.toFixed(2)}% ${current.toFixed(2)}%`;
+  }).join(", ")})`;
+};
+
 const finance = {
   label: "代理商业绩",
   total: "¥199,876.00",
@@ -15,6 +53,7 @@ const finance = {
   rate: "495.1%",
   ambassador: "¥58,918.00",
   branch: "¥140,958.00",
+  regionTotals: financeRegionTotals,
   levels: ["P5总业绩", "P4总业绩", "P3总业绩"],
   levelData: ["¥195,820", "¥166,480", "¥138,280"],
   p5: [64, 42, 29, 29, 14, 12, 0, 0, 0],
@@ -34,6 +73,7 @@ const operation = {
   rate: "149.75%",
   ambassador: "¥73,698.00",
   branch: "¥140,958.00",
+  regionTotals: operationRegionTotals,
   levels: ["P5运营业绩", "P4运营业绩", "P3运营业绩"],
   levelData: ["¥214,656", "¥185,430", "¥153,860"],
   p5: [68, 46, 33, 30, 18, 14, 7, 4, 2],
@@ -81,6 +121,7 @@ const p5RankingRows = [
   { rank: 30, p5: "甘肃区域", owner: "杨静", phone: "138 0931 6129", region: "西部大区", amount: 2460 },
   { rank: 31, p5: "青海区域", owner: "侯颖", phone: "137 0971 4805", region: "西部大区", amount: 1980 },
   { rank: 32, p5: "西藏区域", owner: "孟洁", phone: "136 0891 7302", region: "西部大区", amount: 1260 },
+  { rank: 33, p5: "第五区域", owner: "沈嘉怡", phone: "138 0571 5612", region: "第五大区", amount: 6200 },
 ];
 const p4RankingRows = [
   { rank: 1, p4: "新疆区域", p4Owner: "魏永红", p4OwnerPhone: "138 9910 3081", p5: "新疆区域", p5Owner: "梁丽红", p5OwnerPhone: "138 9910 7201", region: "西部大区", amount: 64700 },
@@ -90,11 +131,11 @@ const p4RankingRows = [
   { rank: 5, p4: "洛阳区域", p4Owner: "王志刚", p4OwnerPhone: "137 3790 6681", p5: "洛阳区域", p5Owner: "王志刚", p5OwnerPhone: "137 3790 6681", region: "中东大区", amount: 14900 },
   ...Array.from({ length: 59 }, (_, index) => {
     const rank = index + 6;
-    const regions = ["西部大区", "中部大区", "东部大区", "东南大区"];
+    const regions = ["西部大区", "中部大区", "东部大区", "东南大区", "第五大区"];
     const names = ["江浙区域", "华南区域", "湖北区域", "豫北区域", "江西区域", "川渝区域", "山东区域", "桂滇区域"];
     const owners = ["周晓梅", "陈静", "刘霞", "李国强", "胡敏", "唐燕", "张云", "何丽"];
-    const p5NamesList = ["新疆区域", "西南区域", "京津冀区域", "洛阳区域", "山东区域"];
-    const p5Owners = ["梁丽红", "-", "王丽娜", "王志刚", "张云"];
+    const p5NamesList = ["新疆区域", "西南区域", "京津冀区域", "洛阳区域", "山东区域", "第五区域"];
+    const p5Owners = ["梁丽红", "-", "王丽娜", "王志刚", "张云", "沈嘉怡"];
     return {
       rank,
       p4: `${names[index % names.length]}${Math.floor(index / names.length) + 1}`,
@@ -116,12 +157,12 @@ const p3RankingRows = [
   { rank: 5, p3: "葛玉红", p3Owner: "葛玉红", p3OwnerPhone: "139 0531 7602", p4: "鲁太吕区域", p4Owner: "宁静", p4OwnerPhone: "137 0531 4082", p5: "鲁太吕区域", p5Owner: "-", p5OwnerPhone: "-", region: "中部大区", amount: 14900 },
   ...Array.from({ length: 103 }, (_, index) => {
     const rank = index + 6;
-    const regions = ["西部大区", "中部大区", "东部大区", "东南大区"];
+    const regions = ["西部大区", "中部大区", "东部大区", "东南大区", "第五大区"];
     const p3NamesList = ["刘霞", "李国强", "胡敏", "唐燕", "张云", "何丽", "黄洁", "谢琳", "赵芳", "孙梅"];
     const p4NamesList = ["江浙区域", "华南区域", "湖北区域", "豫北区域", "江西区域"];
-    const p5NamesList = ["新疆区域", "西南区域", "京津冀区域", "洛阳区域", "山东区域"];
+    const p5NamesList = ["新疆区域", "西南区域", "京津冀区域", "洛阳区域", "山东区域", "第五区域"];
     const p4Owners = ["周晓梅", "陈静", "刘霞", "李国强", "胡敏"];
-    const p5Owners = ["梁丽红", "-", "王丽娜", "王志刚", "张云"];
+    const p5Owners = ["梁丽红", "-", "王丽娜", "王志刚", "张云", "沈嘉怡"];
     const phone = `13${index % 2 === 0 ? 8 : 6} ${String(2000 + rank * 13).slice(0, 4)} ${String(5000 + rank * 29).slice(0, 4)}`;
     return {
       rank,
@@ -199,11 +240,11 @@ function buildAgentRankingRows() {
     { rank: 5, agentName: "JX爱心大使", phone: "15300112225", identityTag: "爱心大使", identityRank: 2, branch: "新疆杨清分院", region: "中部大区", p3: "刘俊云", p3Owner: "刘俊云", p3OwnerPhone: "135 0571 2005", p4: "蒲丽梅", p4Owner: "蒲丽梅", p4OwnerPhone: "135 0571 3005", p5: "临汾区域", p5Owner: "许芳莲", p5OwnerPhone: "135 0571 4005", amount: 27018, hasSplitPerformance: false },
   ];
   const tagCycle = ["分院", "爱心大使"];
-  const regionCycle = ["中部大区", "西部大区", "中部大区", "中东大区", "东南大区"];
+  const regionCycle = ["中部大区", "西部大区", "中部大区", "中东大区", "东南大区", "第五大区"];
   const p3Names = ["高源徽", "赵云珊", "贾嘉男", "王志刚", "刘俊云", "张玉红", "蒲丽梅", "魏永红", "宁静", "肖君"];
   const p4Names = ["蒲丽梅", "魏永红", "宁静", "肖君", "王志刚", "卢秋羽", "赵云珊", "刘俊云"];
-  const p5Names = ["临汾区域", "新疆区域", "鲁太吕区域", "洛阳区域", "新西区域", "重庆区域", "华东区域", "华南区域"];
-  const p5Owners = ["许芳莲", "梁丽红", "-", "王志刚", "赵云珊", "刘俊云", "高源徽", "魏永红"];
+  const p5Names = ["临汾区域", "新疆区域", "鲁太吕区域", "洛阳区域", "新西区域", "重庆区域", "华东区域", "华南区域", "第五区域"];
+  const p5Owners = ["许芳莲", "梁丽红", "-", "王志刚", "赵云珊", "刘俊云", "高源徽", "魏永红", "沈嘉怡"];
   const rows = seeds.map(row => ({ ...row, ...buildAgentPerformanceBreakdown(row.rank, row.amount) }));
   for (let index = seeds.length; index < 1456; index += 1) {
     const rank = index + 1;
@@ -533,44 +574,47 @@ function SummaryRank({ title, total, compare, items }) {
 <span>业绩总计</span>
 <strong>{total}</strong>
 </div>
-<div className="mini-bars">{items.map(([name, value]) => <div key={name}>
+<div className="mini-bars">{items.map(([name, value, amount], index) => <div className="summary-row" key={name}>
+<span className={index < 3 ? `summary-place place place-${index + 1}` : "summary-place plain-place"}>{index + 1}</span>
 <label>{name}</label>
 <i>
 <b style={{ width: `${value === 0 ? 0 : Math.max(3, value / max * 100)}%` }}/>
 </i>
+<strong className="summary-amount">{amount}</strong>
 </div>)}</div>
 </article>;
 }
 
+function RegionPerformanceCard({ title, totals, extraClassName = "" }) {
+  return <article className={`chart-panel regional-performance-card card ${extraClassName}`.trim()}>
+<h3>{title}</h3>
+<div className="large-pie-wrap">
+<div className="large-pie" style={{ background: buildRegionPieGradient(totals) }}/>
+{regionPerformanceItems.map(item => <span className={`callout ${item.calloutClass}`} key={item.name}>
+{item.name}：{formatRegionAmount(totals?.[item.name])}</span>)}
+</div>
+<div className="under-legend">
+{regionPerformanceItems.map(item => <span className="legend-item" key={item.name}>
+<i className={item.legendClass}/>{item.name}</span>)}</div>
+  </article>;
+}
+
 function Overview({ data, active, onOpenRanking }) {
-  const ambassadorItems = active === "finance" ? [["爱心大使刘志力", 100], ["JX爱心大使", 91], ["JX51爱心大使", 8], ["ZHB-代理商", 0], ["爱心大使 董芳英", 0], ["爱心大使白雪", 0]] : [["爱心大使刘志力", 100], ["JX爱心大使", 91], ["艺博集团", 35], ["刘鹏爱心大使", 19], ["JX51爱心大使", 8], ["ZHB-代理商", 0]];
+  const branchItems = [["CY0527爱心大使", 100, "¥59,600"], ["新疆赵娟分院", 83, "¥49,800"], ["洛阳程爱霞分院", 50, "¥29,800"], ["新疆杨利分院", 3, "¥1,080"], ["乌海孙国栋分院", 1, "¥678"]];
+  const ambassadorItems = active === "finance" ? [["爱心大使刘志力", 100, "¥26,820"], ["JX爱心大使", 91, "¥24,500"], ["JX51爱心大使", 8, "¥7,598"], ["ZHB-代理商", 0, "¥0"], ["爱心大使 董芳英", 0, "¥0"], ["爱心大使白雪", 0, "¥0"]] : [["爱心大使刘志力", 100, "¥29,800"], ["JX爱心大使", 91, "¥27,018"], ["艺博集团", 35, "¥10,200"], ["刘鹏爱心大使", 19, "¥4,380"], ["JX51爱心大使", 8, "¥2,300"], ["ZHB-代理商", 0, "¥0"]];
   const maxAgent = Math.max(...data.agents.map(([, value]) => Number(value.replace(/[¥,]/g, ""))));
   return <>
-    <section className="overview-grid">
-      <article className="performance-card card">
-<h2 className="overview-heading">
-<span className="metric-icon purple">●</span>{data.label}</h2>
-<div className="overview-main">
-<Pie isOperation={active === "operation"}/>
-<div className="overview-metrics">
-<div className="total-display">
-<span>总计</span>
-<b>{data.total}</b>
-<small>{data.compare} <em>↑ {data.rate}</em>
-</small>
-</div>
-</div>
-</div>
-</article>
-    </section>
     <section className="rank-section">
 <SectionTitle action="全部" onActionClick={() => onOpenRanking("agent")}>{active === "finance" ? "代理商排行" : `${data.label}排行`}</SectionTitle>
 <div className="rank-grid">
-<SummaryRank title="分院统计" total={data.branch} compare="较上月: ¥110,900.00" items={[["CY0527爱心大使", 100], ["新疆赵娟分院", 83], ["洛阳程爱霞分院", 50], ["新疆杨利分院", 3], ["乌海孙国栋分院", 1]]}/>
+<SummaryRank title="分院统计" total={data.branch} compare="较上月: ¥110,900.00" items={branchItems}/>
 <SummaryRank title="爱心大使统计" total={data.ambassador} compare="较上月: ¥55,389.00" items={ambassadorItems}/>
 <article className="national card">
+<header>
 <h3>
-<span className="mini-icon purple-dot">●</span>代理商全国排行</h3>{data.agents.slice(0, 10).map(([name, value], index) => { const amount = Number(value.replace(/[¥,]/g, "")); return <div className="national-row" key={name}>
+<span className="mini-icon purple-dot">●</span>代理商全国排行</h3>
+</header>
+<div className="national-list">{data.agents.slice(0, 10).map(([name, value], index) => { const amount = Number(value.replace(/[¥,]/g, "")); return <div className="national-row" key={name}>
 <b className={index < 3 ? `place place-${index + 1}` : "plain-place"}>{index + 1}</b>
 <span>{name}</span>
 <div className="national-progress">
@@ -579,51 +623,75 @@ function Overview({ data, active, onOpenRanking }) {
 </i>
 </div>
 <strong>{value}</strong>
-</div>; })}</article>
+</div>; })}</div></article>
 </div>
 </section>
   </>;
 }
 
-function Detail({ data, active, onOpenRanking }) {
+function Detail({ data, region, onOpenRanking, onOpenOrgDetail }) {
+  const selectedRegionTotal = region === "全国"
+    ? stripCurrencyDecimal(data.total)
+    : formatShortCurrency(data.regionTotals?.[region] || 0);
+  const selectedRegionCompare = region === "全国"
+    ? stripCurrencyDecimal(data.compare.replace("较上月：", ""))
+    : formatShortCurrency(Math.round((data.regionTotals?.[region] || 0) * 0.86));
+  const performanceCards = data.levels.map((title, index) => ({
+      type: ["p5", "p4", "p3"][index],
+      title,
+      value: data.levelData[index],
+      compare: "较上月 ¥168,640",
+      showDetail: true,
+    }));
   return <section className="detail-section">
-    <SectionTitle action="">P团队业绩排行</SectionTitle>
-    <div className="level-grid">{data.levels.map((item, index) => <article className="level-card card" key={item}>
-<button className="level-detail-button" type="button">明细</button>
-<p>{item}</p>
-<strong>{data.levelData[index]}</strong>
-<small>较上月&nbsp; ¥168,640 <em>↑ 620.46%</em>
+    <div className="dashboard-top-grid">
+      <article className="level-card total-performance-card card">
+<div className="total-performance-content">
+<div className="total-performance-head">
+<span><i/>总业绩</span>
+<small>{region === "全国" ? "全国汇总" : region}</small>
+</div>
+<div className="total-performance-main">
+<span>总业绩统计</span>
+<strong>{selectedRegionTotal}</strong>
+</div>
+<div className="total-performance-summary">
+<div className="summary-item">
+<span>较上月</span>
+<b>{selectedRegionCompare}</b>
+</div>
+<div className="summary-item">
+<span>增长率</span>
+<b className="up">↑ {data.rate}</b>
+</div>
+</div>
+</div>
+      </article>
+      <RegionPerformanceCard title="大区业绩" totals={data.regionTotals}/>
+    </div>
+    <div className="level-grid p-level-grid">{performanceCards.map(item => <article className="level-card card" key={item.title}>
+ {item.showDetail && <button className="level-detail-button" type="button" onClick={() => onOpenOrgDetail(item.type, {})}>明细</button>}
+<p>{item.title}</p>
+<strong>{item.value}</strong>
+<small>{item.compare} <em>↑ 620.46%</em>
 </small>
 </article>)}</div>
-    <div className="two-panel card wide-panel">
-<div className="chart-panel">
-<h3>大区业绩</h3>
-<div className="large-pie-wrap">
-<div className="large-pie" style={{ background: active === "finance" ? "conic-gradient(#5573c8 0 55%, #92cc72 55% 93%, #fac653 93% 100%)" : "conic-gradient(#5573c8 0 53%, #92cc72 53% 88%, #fac653 88% 100%)" }}/>
-<span className="callout l-one">中部大区：73,010元</span>
-<span className="callout l-two">西部大区：107,910元</span>
-<span className="callout l-three">东部大区：14,900元</span>
-</div>
-<div className="under-legend">
-<i className="blue"/>西部大区 <i className="green"/>中部大区 <i className="yellow"/>东部大区 <i className="red"/>东南大区</div>
-</div>
-<div className="chart-panel">
+    <div className="ranking-chart-grid">
+<article className="chart-panel ranking-chart-card card">
 <h3>P5全国排行 <button type="button" onClick={() => onOpenRanking("p5")}>全部</button>
 </h3>
 <Bars values={data.p5} accent="#ffc650"/>
-</div>
-</div>
-    <div className="two-panel card wide-panel lower">
-<div className="chart-panel">
+</article>
+<article className="chart-panel ranking-chart-card card">
 <h3>P4全国排行 <button type="button" onClick={() => onOpenRanking("p4")}>全部</button>
 </h3>
 <Bars values={data.p4}/>
-</div>
-<div className="chart-panel">
+</article>
+<article className="chart-panel ranking-chart-card card">
 <h3>P3全国排行 <button type="button" onClick={() => onOpenRanking("p3")}>全部</button>
 </h3>
 <Bars values={data.p3} labels={p3Names}/>
-</div>
+</article>
 </div>
   </section>;
 }
@@ -640,7 +708,7 @@ function RankingPage({ type, config: providedConfig, onOpenOrgDetail, onOpenAgen
   const [appliedFilters, setAppliedFilters] = useState({});
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
-  const regions = ["全部", "中部大区", "西部大区", "东部大区", "东南大区", "中东大区"];
+  const regions = ["全部", "中部大区", "西部大区", "东部大区", "东南大区", "中东大区", "第五大区"];
   const filteredRows = config.rows.filter(row => {
     const regionMatched = appliedRegion === "全部" || row.region === appliedRegion;
     const fieldsMatched = [...config.baseFilters, ...config.expandedFilters].every(item => {
@@ -848,7 +916,7 @@ function AgentOrderDetailPage({ agent }) {
   const [expanded, setExpanded] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
-  const regions = ["全部", "中部大区", "西部大区", "东部大区", "东南大区", "中东大区"];
+  const regions = ["全部", "中部大区", "西部大区", "东部大区", "东南大区", "中东大区", "第五大区"];
   const columns = [
     { key: "detailNo", label: "明细单号", width: "126px" },
     { key: "payer", label: "支付人", width: "92px" },
@@ -931,7 +999,6 @@ function AgentOrderDetailPage({ agent }) {
         <button className="search-button" type="button" onClick={runSearch}>⌕ 搜索</button>
         <button className="reset-button" type="button" onClick={resetSearch}>↻ 重置</button>
         <button className="expand-button" type="button" onClick={() => setExpanded(!expanded)}>⌄ {expanded ? "收起" : "展开"}</button>
-        <button className="export-button order-export-button" type="button">↓ 导出</button>
         <button className="export-button order-export-button" type="button">↓ 导出</button>
       </div>
       {expanded && <div className="order-extra-row">
@@ -1027,6 +1094,14 @@ export function App() {
     setView(`ranking-${type}`);
   };
   const openOrgDetail = (type, row) => {
+    const childRankingType = { p5: "p4", p4: "p3" }[type];
+    if (childRankingType) {
+      setDetailContext(null);
+      setOrderContext(null);
+      setAgentListReturnView("ranking-agent");
+      setView(`ranking-${childRankingType}`);
+      return;
+    }
     setDetailContext(row);
     setOrderContext(null);
     setAgentListReturnView(`ranking-${type}-agent-detail`);
@@ -1107,11 +1182,11 @@ export function App() {
 <span>大区</span>
 <select value={region} onChange={(event) => setRegion(event.target.value)}>
 <option value="全国">全国</option>
-<option value="全部">全部</option>
 <option value="西部大区">西部大区</option>
 <option value="中部大区">中部大区</option>
 <option value="东部大区">东部大区</option>
 <option value="东南大区">东南大区</option>
+<option value="第五大区">第五大区</option>
 </select>
 </label>
 <div className="time-filters">
@@ -1129,7 +1204,7 @@ export function App() {
 <span className="tab-dot op-dot"/>运营业绩</button>
 </section>
 <div className="tab-content" key={`${active}-${region}`}>
-<Detail data={data} active={active} onOpenRanking={openRanking}/>
+<Detail data={data} region={region} onOpenRanking={openRanking} onOpenOrgDetail={openOrgDetail}/>
 <Overview data={data} active={active} onOpenRanking={openRanking}/>
 </div>
 </>}
