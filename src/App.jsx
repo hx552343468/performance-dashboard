@@ -26,6 +26,7 @@ const operationRegionTotals = {
 
 const formatShortCurrency = value => `¥${Number(value || 0).toLocaleString("zh-CN")}`;
 const stripCurrencyDecimal = value => String(value || "").replace(/\.00$/, "");
+const formatRegionAmount = value => `${Number(value || 0).toLocaleString("zh-CN")}元`;
 const regionPerformanceItems = [
   { name: "西部大区", color: "#5573c8", legendClass: "blue", calloutClass: "l-two" },
   { name: "中部大区", color: "#92cc72", legendClass: "green", calloutClass: "l-one" },
@@ -33,7 +34,6 @@ const regionPerformanceItems = [
   { name: "东南大区", color: "#ec6b70", legendClass: "red", calloutClass: "l-four" },
   { name: "第五大区", color: "#5bc5a5", legendClass: "teal", calloutClass: "l-five" },
 ];
-const formatRegionAmount = value => `${Number(value || 0).toLocaleString("zh-CN")}元`;
 const buildRegionPieGradient = (totals = {}) => {
   const sum = regionPerformanceItems.reduce((total, item) => total + Number(totals[item.name] || 0), 0);
   if (!sum) return "conic-gradient(#eef2f7 0 100%)";
@@ -590,8 +590,9 @@ function RegionPerformanceCard({ title, totals, extraClassName = "" }) {
 <h3>{title}</h3>
 <div className="large-pie-wrap">
 <div className="large-pie" style={{ background: buildRegionPieGradient(totals) }}/>
-{regionPerformanceItems.map(item => <span className={`callout ${item.calloutClass}`} key={item.name}>
-{item.name}：{formatRegionAmount(totals?.[item.name])}</span>)}
+{regionPerformanceItems.map(item => <div className={`pie-callout ${item.calloutClass}`} style={{ "--callout-color": item.color }} key={item.name}>
+<i className="pie-callout-dot"/>
+<b>{item.name}</b><span>{formatRegionAmount(totals?.[item.name])}</span></div>)}
 </div>
 <div className="under-legend">
 {regionPerformanceItems.map(item => <span className="legend-item" key={item.name}>
@@ -629,7 +630,7 @@ function Overview({ data, active, onOpenRanking }) {
   </>;
 }
 
-function Detail({ data, region, onOpenRanking, onOpenOrgDetail }) {
+function Detail({ data, region, onOpenRanking }) {
   const selectedRegionTotal = region === "全国"
     ? stripCurrencyDecimal(data.total)
     : formatShortCurrency(data.regionTotals?.[region] || 0);
@@ -670,7 +671,7 @@ function Detail({ data, region, onOpenRanking, onOpenOrgDetail }) {
       <RegionPerformanceCard title="大区业绩" totals={data.regionTotals}/>
     </div>
     <div className="level-grid p-level-grid">{performanceCards.map(item => <article className="level-card card" key={item.title}>
- {item.showDetail && <button className="level-detail-button" type="button" onClick={() => onOpenOrgDetail(item.type, {})}>明细</button>}
+ {item.showDetail && <button className="level-detail-button" type="button" onClick={() => onOpenRanking(item.type)}>明细</button>}
 <p>{item.title}</p>
 <strong>{item.value}</strong>
 <small>{item.compare} <em>↑ 620.46%</em>
@@ -1204,7 +1205,7 @@ export function App() {
 <span className="tab-dot op-dot"/>运营业绩</button>
 </section>
 <div className="tab-content" key={`${active}-${region}`}>
-<Detail data={data} region={region} onOpenRanking={openRanking} onOpenOrgDetail={openOrgDetail}/>
+<Detail data={data} region={region} onOpenRanking={openRanking}/>
 <Overview data={data} active={active} onOpenRanking={openRanking}/>
 </div>
 </>}
