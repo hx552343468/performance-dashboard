@@ -1073,11 +1073,12 @@ const lineReportRows = {
       ["华南大区", "陈思", "6 个下级", 1886, 1945, 59],
       ["西部大区", "赵敏", "5 个下级", 1480, 1525, 45],
     ],
-    p5: [["惠赣区域", "运营总监", "2 个下级", 2846, 2935, 89], ["深莞港区域", "运营总监", "4 个下级", 2214, 2288, 74], ["南粤闽湘江区域", "运营总监", "6 个下级", 1886, 1945, 59], ["大湾区区域", "运营总监", "5 个下级", 1480, 1525, 45], ["华东区域", "运营总监", "2 个下级", 1342, 1390, 48], ["测试测试测试", "运营总监", "6 个下级", 1126, 1164, 38], ["广佛闽荆湘区域", "运营总监", "2 个下级", 978, 1005, 27]],
-    p4: [["P4-京津冀", "孙菲", "5 个 P3", 1128, 1164, 36], ["P4-山东", "李楠", "4 个 P3", 948, 973, 25], ["P4-河南", "周倩", "3 个 P3", 812, 846, 34]],
-    p3: [["P3-京津冀一组", "张敏", "绑定 3 个 S3", 468, 486, 18], ["P3-京津冀二组", "陆然", "绑定 2 个 S3", 379, 392, 13], ["P3-山东一组", "高宁", "绑定 4 个 S3", 281, 294, 13]],
+    p5: [["惠赣区域", "梁丽红", "2 个下级", 2846, 2935, 89], ["深莞港区域", "王丽娜", "4 个下级", 2214, 2288, 74], ["南粤闽湘江区域", "陈静", "6 个下级", 1886, 1945, 59], ["大湾区区域", "周晓梅", "5 个下级", 1480, 1525, 45], ["华东区域", "刘霞", "2 个下级", 1342, 1390, 48], ["测试测试测试", "唐燕", "6 个下级", 1126, 1164, 38], ["广佛闽荆湘区域", "张云", "2 个下级", 978, 1005, 27]],
+    p4: [["乌兰察布区域", "孙菲", "5 个下级", 1128, 1164, 36], ["赤峰区域", "李楠", "4 个下级", 948, 973, 25], ["同朔区域", "周倩", "3 个下级", 812, 846, 34], ["呼市区域", "张敏", "7 个下级", 746, 784, 38], ["西南区域", "陆然", "5 个下级", 682, 714, 32], ["西北区域", "高宁", "4 个下级", 598, 624, 26], ["新疆区域", "梁欣", "7 个下级", 536, 562, 26], ["甘青宁区域", "陈晨", "3 个下级", 428, 451, 23]],
+    p3: [["乌兰察布区域一组", "张敏", "绑定 3 个 S3", 468, 486, 18], ["赤峰区域一组", "陆然", "绑定 2 个 S3", 379, 392, 13], ["同朔区域一组", "高宁", "绑定 4 个 S3", 281, 294, 13]],
   },
   s: {
+    s6: [["S6全国服务中心", "服务平台主管", "4 个下级", 8426, 8693, 267]],
     s3: [["韦小群", "韦小群", "8 个下级", 1936, 1994, 58], ["张雪丽", "张雪丽", "7 个下级", 1714, 1768, 54], ["文贞粉", "文贞粉", "6 个下级", 1480, 1522, 42], ["王彦", "王彦", "5 个下级", 1218, 1250, 32]],
     s2: [["张世海", "张世海", "12 个下级", 634, 651, 17], ["翟红娜", "翟红娜", "10 个下级", 581, 600, 19], ["李小瑞", "李小瑞", "8 个下级", 499, 516, 17], ["刘晓丽", "刘晓丽", "7 个下级", 438, 452, 14], ["刘园园", "刘园园", "6 个下级", 385, 398, 13], ["张延芳", "张延芳", "5 个下级", 342, 353, 11], ["张晓燕", "张晓燕", "4 个下级", 296, 305, 9]],
     s1: [["S1-北京东区", "赵林", "0 个下级", 246, 254, 8], ["S1-北京西区", "孙璐", "0 个下级", 218, 224, 6], ["S1-天津服务组", "李薇", "0 个下级", 170, 173, 3]],
@@ -1095,13 +1096,30 @@ const pLinePlatformFields = {
   },
   P4: {
     headers: ["P4", "P4负责人", "负责人电话", "所属 P5", "P5负责人"],
-    values: (row, index) => [row[0], row[1], ["138 0101 2368", "139 0531 8132", "137 0371 6624"][index], ["P5-华北", "P5-华北", "P5-华中"][index], ["王静", "王静", "刘璐"][index]],
+    values: (row, index) => [row[0], row[1], ["138 0101 2368", "139 0531 8132", "137 0371 6624", "136 0108 4527", "138 0281 9135", "139 0771 5082", "138 9910 7201", "137 0791 4028"][index], ["惠赣区域", "惠赣区域", "深莞港区域", "深莞港区域", "南粤闽湘江区域", "南粤闽湘江区域", "大湾区区域", "大湾区区域"][index], ["梁丽红", "梁丽红", "王丽娜", "王丽娜", "陈静", "陈静", "周晓梅", "周晓梅"][index]],
   },
   P3: {
     headers: ["P3", "P3负责人", "负责人电话", "所属 P4", "P4负责人", "所属 P5", "P5负责人", "绑定 S3"],
-    values: (row, index) => [row[0], row[1], ["136 0108 4852", "138 0108 5704", "139 0531 6842"][index], ["P4-京津冀", "P4-京津冀", "P4-山东"][index], ["孙菲", "孙菲", "李楠"][index], ["P5-华北", "P5-华北", "P5-华北"][index], "王静", row[2]],
+    values: (row, index) => [row[0], row[1], ["136 0108 4852", "138 0108 5704", "139 0531 6842"][index], ["乌兰察布区域", "乌兰察布区域", "赤峰区域"][index], ["孙菲", "孙菲", "李楠"][index], ["惠赣区域", "惠赣区域", "惠赣区域"][index], "梁丽红", row[2]],
   },
 };
+
+const sLinePhoneByName = {
+  S6全国服务中心: "138 0108 6321",
+  韦小群: "138 0571 2061",
+  张雪丽: "139 0571 2062",
+  文贞粉: "137 0571 2063",
+  王彦: "136 0571 2064",
+  张世海: "138 0571 3061",
+  翟红娜: "139 0571 3062",
+  李小瑞: "137 0571 3063",
+  刘晓丽: "136 0571 3064",
+  刘园园: "135 0571 3065",
+  张延芳: "138 0571 3066",
+  张晓燕: "139 0571 3067",
+};
+
+const getSLinePhone = (row, index = 0) => sLinePhoneByName[row?.[0]] || `138 0571 ${String(3000 + index).padStart(4, "0")}`;
 
 const lineReportTrend = {
   day: { labels: ["07-01", "07-05", "07-09", "07-13", "07-17", "07-21", "07-25", "07-31"], effective: [198, 232, 219, 274, 251, 305, 286, 318], activation: [214, 245, 238, 296, 271, 329, 312, 344], refund: [16, 13, 19, 22, 20, 24, 26, 26] },
@@ -1117,15 +1135,20 @@ function LineReportTrend({ granularity, visibleSeries, onToggleSeries }) {
     { key: "refund", label: "退款数", color: "#e26b6d", values: trend.refund },
   ];
   const max = Math.max(...series.flatMap(item => item.values)) * 1.15;
-  const points = values => values.map((value, index) => `${46 + index * (350 / (values.length - 1))},${166 - value / max * 126}`).join(" ");
+  const chart = { width: 1600, height: 260, left: 70, right: 44, top: 38, bottom: 210, labelY: 246 };
+  const plotWidth = chart.width - chart.left - chart.right;
+  const plotHeight = chart.bottom - chart.top;
+  const xPoint = (index, length) => chart.left + index * (plotWidth / (length - 1));
+  const yPoint = value => chart.bottom - value / max * plotHeight;
+  const points = values => values.map((value, index) => `${xPoint(index, values.length)},${yPoint(value)}`).join(" ");
   return <section className="line-report-panel line-trend-panel">
     <div className="line-panel-head"><div><h3>业绩趋势</h3><span>按 {granularity === "day" ? "日" : granularity === "week" ? "周" : "月"} 汇总</span></div>
       <div className="line-legend">{series.map(item => <button className={visibleSeries[item.key] ? "active" : ""} type="button" onClick={() => onToggleSeries(item.key)} key={item.key}><i style={{ background: item.color }}/>{item.label}</button>)}</div></div>
     <div className="trend-canvas">
-      <svg viewBox="0 0 420 205" role="img" aria-label="业绩趋势图">
-        {[40, 82, 124, 166].map(y => <line key={y} x1="46" x2="396" y1={y} y2={y} className="trend-grid-line"/>)}
-        {series.filter(item => visibleSeries[item.key]).map(item => <g key={item.key}><polyline points={points(item.values)} fill="none" stroke={item.color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>{item.values.map((value, index) => <circle key={index} cx={46 + index * (350 / (item.values.length - 1))} cy={166 - value / max * 126} r="3" fill="#fff" stroke={item.color} strokeWidth="2"><title>{`${trend.labels[index]} ${item.label} ${value}`}</title></circle>)}</g>)}
-        {trend.labels.map((label, index) => <text key={label} x={46 + index * (350 / (trend.labels.length - 1))} y="194" textAnchor="middle">{label}</text>)}
+      <svg viewBox={`0 0 ${chart.width} ${chart.height}`} role="img" aria-label="业绩趋势图">
+        {[chart.top, chart.top + plotHeight / 3, chart.top + plotHeight / 3 * 2, chart.bottom].map(y => <line key={y} x1={chart.left} x2={chart.width - chart.right} y1={y} y2={y} className="trend-grid-line"/>)}
+        {series.filter(item => visibleSeries[item.key]).map(item => <g key={item.key}><polyline points={points(item.values)} fill="none" stroke={item.color} strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>{item.values.map((value, index) => <circle key={index} cx={xPoint(index, item.values.length)} cy={yPoint(value)} r="6" fill="#fff" stroke={item.color} strokeWidth="4"><title>{`${trend.labels[index]} ${item.label} ${value}`}</title></circle>)}</g>)}
+        {trend.labels.map((label, index) => <text key={label} x={xPoint(index, trend.labels.length)} y={chart.labelY} textAnchor="middle">{label}</text>)}
       </svg>
     </div>
   </section>;
@@ -1161,17 +1184,17 @@ function LinePerformanceReport() {
   const [memberDetail, setMemberDetail] = useState(false);
   const [visibleSeries, setVisibleSeries] = useState({ effective: true, activation: true, refund: true });
   const pLevels = ["大区", "P5", "P4", "P3"];
-  const sLevels = ["S3", "S2", "S1"];
+  const sLevels = ["S6", "S3", "S2"];
   const levels = line === "p" ? pLevels : sLevels;
-  const levelKey = line === "p" ? ["region", "p5", "p4", "p3"][drill.length] : ["s3", "s2", "s1"][drill.length];
+  const levelKey = line === "p" ? ["region", "p5", "p4", "p3"][drill.length] : ["s6", "s3", "s2"][drill.length];
   const currentLevel = levels[drill.length] || levels[levels.length - 1];
   const sourceRows = lineReportRows[line][levelKey] || [];
   const rows = sourceRows.filter(row => !keyword || row.slice(0, 3).join(" ").includes(keyword));
   const platformFields = line === "p" ? pLinePlatformFields[currentLevel] : null;
-  const metadataHeaders = platformFields?.headers || [currentLevel + "名称", "负责人", line === "p" && currentLevel === "P3" ? "绑定 S线" : "下级数量"];
+  const metadataHeaders = platformFields?.headers || [currentLevel + "名称", "手机号码", line === "p" && currentLevel === "P3" ? "绑定 S线" : "下级数量"];
   const tableHeaders = [...metadataHeaders, "有效业绩", "激活数", "退款数", "日均业绩"];
   const tableCells = (row, index) => [
-    ...(platformFields ? platformFields.values(row, index) : [row[0], row[1], row[2]]),
+    ...(platformFields ? platformFields.values(row, index) : [row[0], getSLinePhone(row, index), row[2]]),
     row[3], row[4], row[5], Math.round(row[3] / 32),
   ];
   const exportCurrent = () => {
@@ -1186,7 +1209,7 @@ function LinePerformanceReport() {
   const switchLine = nextLine => { setLine(nextLine); setDrill([]); setMemberDetail(false); setLineDetailPage(null); setMemberDetailPage(null); resetDetailList(); };
   const detailStartLevel = {
     p: { "大区": "P5", P5: "P4", P4: "P3", P3: "P3" },
-    s: { S3: "S2", S2: "S1", S1: "S1" },
+    s: { S6: "S3", S3: "S2", S2: "S2" },
   };
   const detailNextLevel = {
     p: { P5: "P4", P4: "P3" },
@@ -1197,6 +1220,9 @@ function LinePerformanceReport() {
     s: { S3: "s3", S2: "s2", S1: "s1" },
   };
   const p3BoundS3Rows = {
+    "乌兰察布区域一组": lineReportRows.s.s3.slice(0, 3),
+    "赤峰区域一组": lineReportRows.s.s3.slice(1, 3),
+    "同朔区域一组": lineReportRows.s.s3,
     "P3-京津冀一组": lineReportRows.s.s3.slice(0, 3),
     "P3-京津冀二组": lineReportRows.s.s3.slice(1, 3),
     "P3-山东一组": lineReportRows.s.s3,
@@ -1213,18 +1239,19 @@ function LinePerformanceReport() {
     const childLevel = isP3Binding ? "S3" : detailNextLevel[activePage.line][activePage.level];
     if (!childLevel) return;
     const childPage = { line: childLine, parentName: row[0], level: childLevel };
-    if (isP3Binding) childPage.rows = p3BoundS3Rows[row[0]] || [];
+    if (isP3Binding) childPage.rows = p3BoundS3Rows[row[0]] || lineReportRows.s.s3;
     setLineDetailPage({ ...lineDetailPage, pages: [...lineDetailPage.pages, childPage] });
     resetDetailList();
   };
   const openMemberDetailPage = row => {
     const activePage = lineDetailPage.pages[lineDetailPage.pages.length - 1];
-    setMemberDetailPage({ s2Name: row[0], s3Name: activePage.parentName, p3Name: "P3-京津冀一组" });
+    setMemberDetailPage({ s2Name: row[0], s3Name: activePage.parentName });
     resetDetailList();
   };
   if (memberDetailPage) {
     const members = [["张语涵", "138 0108 4852", "2026-07-29 10:26", "-"], ["陈思远", "139 0531 6842", "2026-07-29 14:18", "-"], ["周雨桐", "137 0371 6624", "2026-07-28 09:42", "2026-07-30 11:08"], ["李明轩", "136 0206 3198", "2026-07-27 16:06", "-"], ["王诗涵", "138 0571 2860", "2026-07-27 11:32", "-"]];
-    return <section className="line-detail-page"><div className="line-detail-page-head"><div><div className="line-breadcrumb"><button type="button" onClick={() => { setMemberDetailPage(null); resetDetailList(); }}>返回 S2业绩明细</button><i>/</i><button type="button" onClick={() => { setMemberDetailPage(null); resetDetailList(); }}>{memberDetailPage.s2Name}</button></div><h1>卓越家族会员明细</h1><p>{memberDetailPage.s2Name} 服务的卓越家族会员列表</p></div></div><section className="line-report-panel line-detail-list-panel"><div className="line-table-wrap"><table className="line-table member-table"><thead><tr>{["学员名称", "电话号码", "激活时间", "退款时间", "服务 S2", "归属 S3", "绑定 P3"].map(header => <th key={header}>{header}</th>)}</tr></thead><tbody>{members.map(member => <tr key={member[1]}>{[...member, memberDetailPage.s2Name, memberDetailPage.s3Name, memberDetailPage.p3Name].map((cell, index) => <td className={index === 3 && cell !== "-" ? "line-refund" : ""} key={index}>{cell}</td>)}</tr>)}</tbody></table></div></section></section>;
+    const boundP3Names = ["乌兰察布区域一组", "赤峰区域一组", "同朔区域一组", "呼市区域一组", "西南区域一组"];
+    return <section className="line-detail-page"><div className="line-detail-page-head"><div><div className="line-breadcrumb"><button type="button" onClick={() => { setMemberDetailPage(null); resetDetailList(); }}>返回 S2业绩明细</button><i>/</i><button type="button" onClick={() => { setMemberDetailPage(null); resetDetailList(); }}>{memberDetailPage.s2Name}</button></div><h1>卓越家族会员明细</h1><p>{memberDetailPage.s2Name} 服务的卓越家族会员列表</p></div></div><section className="line-report-panel line-detail-list-panel"><div className="line-table-wrap"><table className="line-table member-table"><thead><tr>{["学员名称", "电话号码", "激活时间", "退款时间", "服务 S2", "归属 S3", "绑定 P3"].map(header => <th key={header}>{header}</th>)}</tr></thead><tbody>{members.map((member, index) => <tr key={member[1]}>{[...member, memberDetailPage.s2Name, memberDetailPage.s3Name, boundP3Names[index % boundP3Names.length]].map((cell, cellIndex) => <td className={cellIndex === 3 && cell !== "-" ? "line-refund" : ""} key={cellIndex}>{cell}</td>)}</tr>)}</tbody></table></div></section></section>;
   }
   if (lineDetailPage) {
     const activeDetailPage = lineDetailPage.pages[lineDetailPage.pages.length - 1];
@@ -1233,18 +1260,24 @@ function LinePerformanceReport() {
     const detailRows = activeDetailPage.rows || lineReportRows[detailLine][detailKey] || [];
     const detailFields = detailLine === "p"
       ? pLinePlatformFields[activeDetailPage.level]
-      : { headers: [`${activeDetailPage.level}名称`, "负责人", "下级数量"], values: row => [row[0], row[1], row[2]] };
+      : { headers: [`${activeDetailPage.level}名称`, "手机号码", "下级数量"], values: (row, index) => [row[0], getSLinePhone(row, index), row[2]] };
     const detailHeaders = [...detailFields.headers, "有效业绩", "激活数", "退款数", "日均业绩"];
     const canDrillDetail = activeDetailPage.level === "P3" || Boolean(detailNextLevel[detailLine][activeDetailPage.level]);
     const opensMemberDetail = detailLine === "s" && activeDetailPage.level === "S2";
-    const detailOwners = [...new Set(detailRows.map(row => row[1]))];
-    const filteredDetailRows = detailRows.filter(row => (!detailKeyword || row.slice(0, 3).join(" ").includes(detailKeyword)) && (detailOwner === "all" || row[1] === detailOwner));
+    const isSLineDetail = detailLine === "s";
+    const detailContactOptions = [...new Set(detailRows.map((row, index) => isSLineDetail ? getSLinePhone(row, index) : row[1]))];
+    const filteredDetailRows = detailRows.filter(row => {
+      const rowIndex = detailRows.indexOf(row);
+      const rowContact = isSLineDetail ? getSLinePhone(row, rowIndex) : row[1];
+      const keywordText = isSLineDetail ? [row[0], rowContact, row[2]].join(" ") : row.slice(0, 3).join(" ");
+      return (!detailKeyword || keywordText.includes(detailKeyword)) && (detailOwner === "all" || rowContact === detailOwner);
+    });
     const totalDetailPages = Math.max(1, Math.ceil(filteredDetailRows.length / detailPageSize));
     const activeDetailPageNumber = Math.min(detailPageNumber, totalDetailPages);
     const pagedDetailRows = filteredDetailRows.slice((activeDetailPageNumber - 1) * detailPageSize, activeDetailPageNumber * detailPageSize);
     return <section className="line-detail-page">
       <div className="line-detail-page-head"><div><div className="line-breadcrumb"><button type="button" onClick={() => { setLineDetailPage(null); resetDetailList(); }}>返回 {lineDetailPage.rootLine === "p" ? "P线业绩统计" : "S线业绩统计"}</button>{lineDetailPage.pages.map((page, index) => <React.Fragment key={`${page.line}-${page.parentName}-${page.level}`}><i>/</i><button type="button" onClick={() => { setLineDetailPage({ ...lineDetailPage, pages: lineDetailPage.pages.slice(0, index + 1) }); resetDetailList(); }}>{page.parentName}</button></React.Fragment>)}</div><h1>{activeDetailPage.parentName} - {activeDetailPage.level}业绩明细</h1><p>当前组织下属 {activeDetailPage.level} 的业绩列表</p></div></div>
-      <section className="line-report-panel line-detail-list-panel"><div className="line-detail-tools"><label><span>组织/负责人</span><input value={detailKeyword} onChange={event => { setDetailKeyword(event.target.value); setDetailPageNumber(1); }} placeholder="输入组织或负责人"/></label><label><span>负责人</span><select value={detailOwner} onChange={event => { setDetailOwner(event.target.value); setDetailPageNumber(1); }}><option value="all">全部负责人</option>{detailOwners.map(owner => <option value={owner} key={owner}>{owner}</option>)}</select></label><button className="line-search-button" type="button" onClick={() => setDetailPageNumber(1)}>查询</button><button className="line-detail-reset" type="button" onClick={resetDetailList}>重置</button></div><div className="line-table-wrap"><table className="line-table"><thead><tr>{detailHeaders.map(header => <th key={header}>{header}</th>)}<th>操作</th></tr></thead><tbody>{pagedDetailRows.map(row => <tr key={row[0]}>{[...detailFields.values(row, detailRows.indexOf(row)), row[3], row[4], row[5], Math.round(row[3] / 32)].map((cell, cellIndex) => <td className={cellIndex === detailFields.headers.length ? "line-amount" : cellIndex === detailFields.headers.length + 2 ? "line-refund" : ""} key={`${row[0]}-${cellIndex}`}>{cell}</td>)}<td>{canDrillDetail && <button className="line-detail-button" type="button" onClick={() => drillDetailPage(row)}>{activeDetailPage.level === "P3" ? "查看绑定S3" : "查看详情"}</button>}</td></tr>)}{!pagedDetailRows.length && <tr><td colSpan={detailHeaders.length + 1} className="line-empty">暂无符合筛选条件的数据</td></tr>}</tbody></table></div><footer className="line-detail-pagination"><span>共 {filteredDetailRows.length} 条</span><label>每页 <select value={detailPageSize} onChange={event => { setDetailPageSize(Number(event.target.value)); setDetailPageNumber(1); }}><option value="5">5 条</option><option value="10">10 条</option><option value="20">20 条</option></select></label><button type="button" disabled={activeDetailPageNumber === 1} onClick={() => setDetailPageNumber(activeDetailPageNumber - 1)}>上一页</button>{Array.from({ length: totalDetailPages }, (_, index) => index + 1).map(page => <button type="button" className={page === activeDetailPageNumber ? "active" : ""} onClick={() => setDetailPageNumber(page)} key={page}>{page}</button>)}<button type="button" disabled={activeDetailPageNumber === totalDetailPages} onClick={() => setDetailPageNumber(activeDetailPageNumber + 1)}>下一页</button></footer></section>
+      <section className="line-report-panel line-detail-list-panel"><div className="line-detail-tools"><label><span>{isSLineDetail ? "组织/手机号" : "组织/负责人"}</span><input value={detailKeyword} onChange={event => { setDetailKeyword(event.target.value); setDetailPageNumber(1); }} placeholder={isSLineDetail ? "输入组织或手机号" : "输入组织或负责人"}/></label><label><span>{isSLineDetail ? "手机号码" : "负责人"}</span><select value={detailOwner} onChange={event => { setDetailOwner(event.target.value); setDetailPageNumber(1); }}><option value="all">{isSLineDetail ? "全部手机号码" : "全部负责人"}</option>{detailContactOptions.map(contact => <option value={contact} key={contact}>{contact}</option>)}</select></label><button className="line-search-button" type="button" onClick={() => setDetailPageNumber(1)}>查询</button><button className="line-detail-reset" type="button" onClick={resetDetailList}>重置</button></div><div className="line-table-wrap"><table className="line-table"><thead><tr>{detailHeaders.map(header => <th key={header}>{header}</th>)}<th>操作</th></tr></thead><tbody>{pagedDetailRows.map(row => <tr key={row[0]}>{[...detailFields.values(row, detailRows.indexOf(row)), row[3], row[4], row[5], Math.round(row[3] / 32)].map((cell, cellIndex) => <td className={cellIndex === detailFields.headers.length ? "line-amount" : cellIndex === detailFields.headers.length + 2 ? "line-refund" : ""} key={`${row[0]}-${cellIndex}`}>{cell}</td>)}<td>{(canDrillDetail || opensMemberDetail) && <button className="line-detail-button" type="button" onClick={() => opensMemberDetail ? openMemberDetailPage(row) : drillDetailPage(row)}>{opensMemberDetail ? "查看会员明细" : activeDetailPage.level === "P3" ? "查看绑定S3" : "查看详情"}</button>}</td></tr>)}{!pagedDetailRows.length && <tr><td colSpan={detailHeaders.length + 1} className="line-empty">暂无符合筛选条件的数据</td></tr>}</tbody></table></div><footer className="line-detail-pagination"><span>共 {filteredDetailRows.length} 条</span><label>每页 <select value={detailPageSize} onChange={event => { setDetailPageSize(Number(event.target.value)); setDetailPageNumber(1); }}><option value="5">5 条</option><option value="10">10 条</option><option value="20">20 条</option></select></label><button type="button" disabled={activeDetailPageNumber === 1} onClick={() => setDetailPageNumber(activeDetailPageNumber - 1)}>上一页</button>{Array.from({ length: totalDetailPages }, (_, index) => index + 1).map(page => <button type="button" className={page === activeDetailPageNumber ? "active" : ""} onClick={() => setDetailPageNumber(page)} key={page}>{page}</button>)}<button type="button" disabled={activeDetailPageNumber === totalDetailPages} onClick={() => setDetailPageNumber(activeDetailPageNumber + 1)}>下一页</button></footer></section>
     </section>;
   }
   return <section className="line-report-page">
