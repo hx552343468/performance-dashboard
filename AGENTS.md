@@ -15,3 +15,7 @@ For this performance dashboard, favor a larger, presentation-friendly desktop sc
 Favor a restrained, professional enterprise-dashboard look: pale grey canvas, white cards with soft borders/shadows, a single calm blue primary color, and minimal decorative elements. Preserve the current information architecture while refining hierarchy and whitespace.
 
 Use a polished, presentation-ready finish: consistent section rhythm, light data-card dividers, and subtle hover elevation only where it reinforces an interactive card.
+
+## P/S Line Performance Report
+
+The P/S line performance report follows the platform-performance drill-down convention. P-line hierarchy is region to P5 to P4 to P3, with P3 binding views for S3/S2 contributions. S-line hierarchy is S6 to S3 to S2 to S1, with service member detail available from S2.
