@@ -1235,7 +1235,6 @@ function LinePerformanceReport() {
   const [granularity, setGranularity] = useState("day");
   const [period, setPeriod] = useState("month");
   const [region, setRegion] = useState("全部大区");
-  const [keyword, setKeyword] = useState("");
   const [drill, setDrill] = useState([]);
   const [lineDetailPage, setLineDetailPage] = useState(null);
   const [memberDetailPage, setMemberDetailPage] = useState(null);
@@ -1256,8 +1255,7 @@ function LinePerformanceReport() {
   const levels = pLevels;
   const levelKey = ["region", "p5", "p4", "p3"][drill.length];
   const currentLevel = levels[drill.length] || levels[levels.length - 1];
-  const sourceRows = lineReportRows[line][levelKey] || [];
-  const rows = sourceRows.filter(row => !keyword || row.slice(0, 3).join(" ").includes(keyword));
+  const rows = lineReportRows[line][levelKey] || [];
   const platformFields = pLinePlatformFields[currentLevel];
   const metadataHeaders = platformFields.headers;
   const tableHeaders = [...metadataHeaders, "有效业绩", "激活数", "退款数", "日均业绩"];
@@ -1473,7 +1471,6 @@ function LinePerformanceReport() {
     <section className="line-report-filters">
       <div className="line-period-filter"><span>统计周期</span><div className="line-period-options">{[["yesterday", "昨日"], ["week", "本周"], ["month", "本月"], ["year", "本年"], ["calendar", "日历"]].map(([value, label]) => <button key={value} className={period === value ? "active" : ""} type="button" onClick={() => setPeriod(value)}>{label}</button>)}</div>{period === "calendar" && <div className="line-custom-date"><input type="date" defaultValue="2026-07-01"/><b>至</b><input type="date" defaultValue="2026-07-31"/></div>}</div>
       <label><span>所属大区</span><select value={region} onChange={event => setRegion(event.target.value)}><option>全部大区</option><option>华北大区</option><option>华中大区</option><option>华南大区</option><option>西部大区</option></select></label>
-      <label><span>组织/人员</span><input value={keyword} onChange={event => setKeyword(event.target.value)} placeholder="输入组织或负责人"/></label>
       <button className="line-search-button" type="button">查询</button><button className="line-export-button" type="button" onClick={exportCurrent}>导出列表</button>
     </section>
     <section className="line-metric-grid">{lineReportMetrics[line].map(metric => <article className={`line-metric ${metric.tone || ""}`} key={metric.label}><span>{metric.label}</span><strong>{metric.value}</strong><small>{metric.note}</small></article>)}</section>
@@ -1526,7 +1523,7 @@ function Sidebar({ onOpenDashboard, onOpenLineReport, lineReportOpen }) {
 export function App() {
   const [active, setActive] = useState("finance");
   const [region, setRegion] = useState("全国");
-  const [view, setView] = useState("dashboard");
+  const [view, setView] = useState("line-report");
   const [detailContext, setDetailContext] = useState(null);
   const [orderContext, setOrderContext] = useState(null);
   const [agentListReturnView, setAgentListReturnView] = useState("ranking-agent");

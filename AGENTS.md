@@ -19,3 +19,7 @@ Use a polished, presentation-ready finish: consistent section rhythm, light data
 ## P/S Line Performance Report
 
 The P/S line performance report follows the platform-performance drill-down convention. P-line hierarchy is region to P5 to P4 to P3, with P3 binding views for S3/S2 contributions. S-line hierarchy is S6 to S3 to S2 to S1, with service member detail available from S2.
+
+## Default landing page
+
+The app should open directly to `P线业绩统计报表` by default instead of the homepage dashboard.
