@@ -338,7 +338,11 @@ const rankingConfigs = {
     rows: p5RankingRows,
     amountLabel: "业绩总额（￥）",
     baseFilters: [],
-    expandedFilters: [{ key: "p5", label: "P5", placeholder: "请输入P5" }, { key: "owner", label: "P5负责人", placeholder: "请输入P5负责人" }],
+    expandedFilters: [
+      { key: "p5", label: "P5", placeholder: "请输入P5" },
+      { key: "owner", label: "P5负责人", placeholder: "请输入P5负责人" },
+      { key: "phone", label: "负责人电话", placeholder: "请输入负责人电话" },
+    ],
     columns: [
       { key: "rank", label: "全国排名" },
       { key: "p5", label: "P5" },
@@ -514,7 +518,30 @@ function getRankingConfig(type, detailContext) {
       subTab: "代理商明细",
       rows,
       minWidth: rankingConfigs.agent.minWidth - 240,
-      columns: rankingConfigs.agent.columns.filter(column => !["rank", "identityRank"].includes(column.key)),
+      showRegionFilter: false,
+      baseFilters: [
+        { key: "agentName", label: "代理商名称", placeholder: "请输入代理商名称", type: "input" },
+        { key: "phone", label: "手机号码", placeholder: "请输入手机号码", type: "input" },
+        {
+          key: "identityTag",
+          label: "身份标签",
+          type: "select",
+          options: ["身份标签", "分院", "爱心大使"],
+        },
+      ],
+      expandedFilters: [],
+        columns: rankingConfigs.agent.columns
+          .filter(column => !["rank", "identityRank", "branch", "p3", "p3Owner", "p3OwnerPhone", "p4", "p4Owner", "p4OwnerPhone", "p5", "p5Owner", "p5OwnerPhone"].includes(column.key))
+          .map(column => ({
+            ...column,
+            label: {
+              p3Owner: "P3负责人",
+              p3OwnerPhone: "P3负责人电话",
+              p4OwnerPhone: "负责人电话",
+              p5Owner: "P5负责人",
+              p5OwnerPhone: "P5负责人电话",
+          }[column.key] || column.label,
+        })),
     };
   }
 
@@ -701,6 +728,7 @@ function RankingPage({ type, config: providedConfig, onOpenOrgDetail, onOpenAgen
   const config = providedConfig || getRankingConfig(type);
   const isOrgAgentDetail = /^p[345]-agent-detail$/.test(type);
   const isAgentTable = type === "agent" || isOrgAgentDetail;
+  const showRegionFilter = config.showRegionFilter !== false;
   const canOpenAgentDetail = ["p3", "p4", "p5"].includes(type);
   const [draftRegion, setDraftRegion] = useState("全部");
   const [appliedRegion, setAppliedRegion] = useState("全部");
@@ -711,7 +739,7 @@ function RankingPage({ type, config: providedConfig, onOpenOrgDetail, onOpenAgen
   const [pageSize, setPageSize] = useState(5);
   const regions = ["全部", "中部大区", "西部大区", "东部大区", "东南大区", "中东大区", "第五大区"];
   const filteredRows = config.rows.filter(row => {
-    const regionMatched = appliedRegion === "全部" || row.region === appliedRegion;
+    const regionMatched = !showRegionFilter || appliedRegion === "全部" || row.region === appliedRegion;
     const fieldsMatched = [...config.baseFilters, ...config.expandedFilters].every(item => {
       const value = (appliedFilters[item.key] || "").trim();
       if (!value) return true;
@@ -802,17 +830,19 @@ function RankingPage({ type, config: providedConfig, onOpenOrgDetail, onOpenAgen
         </div>
         <div className="ranking-filter-card ranking-filter-card-agent">
           <div className="ranking-filter-row ranking-filter-row-agent">
-            {config.baseFilters.slice(0, 2).map(renderField)}
-            <label>
-              <span>所属大区</span>
-              <select value={draftRegion} onChange={(event) => setDraftRegion(event.target.value)}>
-                {regions.map(region => <option key={region} value={region}>{region === "全部" ? "请选择所属大区" : region}</option>)}
-              </select>
-            </label>
-            {config.baseFilters.slice(2).map(renderField)}
+            {showRegionFilter ? <>
+              {config.baseFilters.slice(0, 2).map(renderField)}
+              <label>
+                <span>所属大区</span>
+                <select value={draftRegion} onChange={(event) => setDraftRegion(event.target.value)}>
+                  {regions.map(region => <option key={region} value={region}>{region === "全部" ? "请选择所属大区" : region}</option>)}
+                </select>
+              </label>
+              {config.baseFilters.slice(2).map(renderField)}
+            </> : config.baseFilters.map(renderField)}
             <button className="search-button" type="button" onClick={runSearch}>⌕ 搜索</button>
             <button className="reset-button" type="button" onClick={resetSearch}>↻ 重置</button>
-            <button className="expand-button" type="button" onClick={() => setExpanded(!expanded)}>⌄ {expanded ? "收起" : "展开"}</button>
+            {config.expandedFilters.length > 0 && <button className="expand-button" type="button" onClick={() => setExpanded(!expanded)}>⌄ {expanded ? "收起" : "展开"}</button>}
           </div>
           {expanded && <div className="ranking-extra-row">
             {config.expandedFilters.map(renderField)}
@@ -1095,8 +1125,8 @@ const pLinePlatformFields = {
     values: (row, index) => [row[0], row[1], ["139 0108 6321", "138 0371 5568", "136 0206 7824", "137 0206 7825", "138 0571 2860", "139 0108 4852", "136 0206 3198"][index], row[2]],
   },
   P4: {
-    headers: ["P4", "P4负责人", "负责人电话", "所属 P5", "P5负责人"],
-    values: (row, index) => [row[0], row[1], ["138 0101 2368", "139 0531 8132", "137 0371 6624", "136 0108 4527", "138 0281 9135", "139 0771 5082", "138 9910 7201", "137 0791 4028"][index], ["惠赣区域", "惠赣区域", "深莞港区域", "深莞港区域", "南粤闽湘江区域", "南粤闽湘江区域", "大湾区区域", "大湾区区域"][index], ["梁丽红", "梁丽红", "王丽娜", "王丽娜", "陈静", "陈静", "周晓梅", "周晓梅"][index]],
+    headers: ["P4", "P4负责人", "负责人电话"],
+    values: (row, index) => [row[0], row[1], ["138 0101 2368", "139 0531 8132", "137 0371 6624", "136 0108 4527", "138 0281 9135", "139 0771 5082", "138 9910 7201", "137 0791 4028"][index]],
   },
   P3: {
     headers: ["P3", "P3负责人", "负责人电话", "所属 P4", "P4负责人", "所属 P5", "P5负责人", "绑定 S3"],
@@ -1120,6 +1150,38 @@ const sLinePhoneByName = {
 };
 
 const getSLinePhone = (row, index = 0) => sLinePhoneByName[row?.[0]] || `138 0571 ${String(3000 + index).padStart(4, "0")}`;
+
+const lineAgentDetailColumns = [
+  { key: "agentName", label: "代理商名称" },
+  { key: "phone", label: "手机号码" },
+  { key: "identityTag", label: "身份标签" },
+  { key: "effectivePerformance", label: "有效业绩" },
+  { key: "activationCount", label: "激活数" },
+  { key: "refundCount", label: "退款数" },
+  { key: "dailyAverage", label: "日均业绩" },
+  { key: "region", label: "所属大区" },
+];
+
+const getLineAgentMetrics = row => {
+  const effectivePerformance = Math.max(1, Math.round((row.amount || 0) / 100));
+  const refundCount = (row.rank % 5) + (row.hasSplitPerformance ? 2 : 0);
+  const activationCount = effectivePerformance + refundCount;
+  return {
+    effectivePerformance,
+    activationCount,
+    refundCount,
+    dailyAverage: Math.round(effectivePerformance / 32),
+  };
+};
+
+const getLineAgentDetailRows = p3Name => {
+  const groupIndex = Math.max(0, lineReportRows.p.p3.findIndex(row => row[0] === p3Name));
+  const groupCount = lineReportRows.p.p3.length || 1;
+  return agentRankingRows
+    .filter((_, index) => index % groupCount === groupIndex)
+    .slice(0, 8)
+    .map(row => ({ ...row, ...getLineAgentMetrics(row) }));
+};
 
 const lineReportTrend = {
   day: { labels: ["07-01", "07-05", "07-09", "07-13", "07-17", "07-21", "07-25", "07-31"], effective: [198, 232, 219, 274, 251, 305, 286, 318], activation: [214, 245, 238, 296, 271, 329, 312, 344], refund: [16, 13, 19, 22, 20, 24, 26, 26] },
@@ -1169,7 +1231,7 @@ function PTeamPerformanceRanking({ title, rows, nameKey }) {
 }
 
 function LinePerformanceReport() {
-  const [line, setLine] = useState("p");
+  const line = "p";
   const [granularity, setGranularity] = useState("day");
   const [period, setPeriod] = useState("month");
   const [region, setRegion] = useState("全部大区");
@@ -1178,20 +1240,26 @@ function LinePerformanceReport() {
   const [lineDetailPage, setLineDetailPage] = useState(null);
   const [memberDetailPage, setMemberDetailPage] = useState(null);
   const [detailKeyword, setDetailKeyword] = useState("");
+  const [detailOwnerKeyword, setDetailOwnerKeyword] = useState("");
+  const [detailPhoneKeyword, setDetailPhoneKeyword] = useState("");
   const [detailOwner, setDetailOwner] = useState("all");
   const [detailPageNumber, setDetailPageNumber] = useState(1);
   const [detailPageSize, setDetailPageSize] = useState(5);
-  const [memberDetail, setMemberDetail] = useState(false);
+  const [memberNameKeyword, setMemberNameKeyword] = useState("");
+  const [memberPhoneKeyword, setMemberPhoneKeyword] = useState("");
+  const [memberS3Filter, setMemberS3Filter] = useState("all");
+  const [memberS2Filter, setMemberS2Filter] = useState("all");
+  const [memberPageNumber, setMemberPageNumber] = useState(1);
+  const [memberPageSize, setMemberPageSize] = useState(5);
   const [visibleSeries, setVisibleSeries] = useState({ effective: true, activation: true, refund: true });
   const pLevels = ["大区", "P5", "P4", "P3"];
-  const sLevels = ["S6", "S3", "S2"];
-  const levels = line === "p" ? pLevels : sLevels;
-  const levelKey = line === "p" ? ["region", "p5", "p4", "p3"][drill.length] : ["s6", "s3", "s2"][drill.length];
+  const levels = pLevels;
+  const levelKey = ["region", "p5", "p4", "p3"][drill.length];
   const currentLevel = levels[drill.length] || levels[levels.length - 1];
   const sourceRows = lineReportRows[line][levelKey] || [];
   const rows = sourceRows.filter(row => !keyword || row.slice(0, 3).join(" ").includes(keyword));
-  const platformFields = line === "p" ? pLinePlatformFields[currentLevel] : null;
-  const metadataHeaders = platformFields?.headers || [currentLevel + "名称", "手机号码", line === "p" && currentLevel === "P3" ? "绑定 S线" : "下级数量"];
+  const platformFields = pLinePlatformFields[currentLevel];
+  const metadataHeaders = platformFields.headers;
   const tableHeaders = [...metadataHeaders, "有效业绩", "激活数", "退款数", "日均业绩"];
   const tableCells = (row, index) => [
     ...(platformFields ? platformFields.values(row, index) : [row[0], getSLinePhone(row, index), row[2]]),
@@ -1201,12 +1269,19 @@ function LinePerformanceReport() {
     const csv = ["组织,负责人,下级组织,有效业绩,激活数,退款数", ...rows.map(row => `${row[0]},${row[1]},${row[2]},${row[3]},${row[4]},${row[5]}`)].join("\n");
     const link = document.createElement("a");
     link.href = URL.createObjectURL(new Blob([`\uFEFF${csv}`], { type: "text/csv;charset=utf-8" }));
-    link.download = `${line === "p" ? "P线" : "S线"}业绩报表_${region}_${new Date().toISOString().slice(0, 10)}.csv`;
+    link.download = `P线业绩报表_${region}_${new Date().toISOString().slice(0, 10)}.csv`;
     link.click();
     URL.revokeObjectURL(link.href);
   };
-  const resetDetailList = () => { setDetailKeyword(""); setDetailOwner("all"); setDetailPageNumber(1); };
-  const switchLine = nextLine => { setLine(nextLine); setDrill([]); setMemberDetail(false); setLineDetailPage(null); setMemberDetailPage(null); resetDetailList(); };
+  const resetDetailList = () => { setDetailKeyword(""); setDetailOwnerKeyword(""); setDetailPhoneKeyword(""); setDetailOwner("all"); setDetailPageNumber(1); };
+  const resetMemberDetailList = () => {
+    setMemberNameKeyword("");
+    setMemberPhoneKeyword("");
+    setMemberS3Filter("all");
+    setMemberS2Filter("all");
+    setMemberPageNumber(1);
+    setMemberPageSize(5);
+  };
   const detailStartLevel = {
     p: { "大区": "P5", P5: "P4", P4: "P3", P3: "P3" },
     s: { S6: "S3", S3: "S2", S2: "S2" },
@@ -1219,93 +1294,203 @@ function LinePerformanceReport() {
     p: { P5: "p5", P4: "p4", P3: "p3" },
     s: { S3: "s3", S2: "s2", S1: "s1" },
   };
-  const p3BoundS3Rows = {
-    "乌兰察布区域一组": lineReportRows.s.s3.slice(0, 3),
-    "赤峰区域一组": lineReportRows.s.s3.slice(1, 3),
-    "同朔区域一组": lineReportRows.s.s3,
-    "P3-京津冀一组": lineReportRows.s.s3.slice(0, 3),
-    "P3-京津冀二组": lineReportRows.s.s3.slice(1, 3),
-    "P3-山东一组": lineReportRows.s.s3,
-  };
   const openLineDetailPage = row => {
     const childLevel = detailStartLevel[line][currentLevel];
-    setLineDetailPage({ rootLine: line, pages: [{ line, parentName: row[0], level: childLevel }] });
+    const page = { line, parentName: row[0], level: childLevel };
+    if (currentLevel === "P3") page.mode = "agent";
+    setLineDetailPage({ rootLine: line, pages: [page] });
     resetDetailList();
   };
   const drillDetailPage = row => {
     const activePage = lineDetailPage.pages[lineDetailPage.pages.length - 1];
-    const isP3Binding = activePage.line === "p" && activePage.level === "P3";
-    const childLine = isP3Binding ? "s" : activePage.line;
-    const childLevel = isP3Binding ? "S3" : detailNextLevel[activePage.line][activePage.level];
+    const childLine = activePage.line;
+    const childLevel = detailNextLevel[activePage.line]?.[activePage.level];
     if (!childLevel) return;
     const childPage = { line: childLine, parentName: row[0], level: childLevel };
-    if (isP3Binding) childPage.rows = p3BoundS3Rows[row[0]] || lineReportRows.s.s3;
+    if (childLevel === "P3") childPage.mode = "agent";
     setLineDetailPage({ ...lineDetailPage, pages: [...lineDetailPage.pages, childPage] });
     resetDetailList();
   };
   const openMemberDetailPage = row => {
     const activePage = lineDetailPage.pages[lineDetailPage.pages.length - 1];
-    setMemberDetailPage({ s2Name: row[0], s3Name: activePage.parentName });
-    resetDetailList();
+    const agentName = row.agentName || row[0];
+    setMemberDetailPage({
+      ownerName: agentName,
+      returnLabel: activePage.mode === "agent" ? "代理商明细" : "S2业绩明细",
+      sourceLabel: activePage.mode === "agent" ? "代理商" : "S2",
+      sourceParent: activePage.parentName,
+    });
+    resetMemberDetailList();
   };
   if (memberDetailPage) {
-    const members = [["张语涵", "138 0108 4852", "2026-07-29 10:26", "-"], ["陈思远", "139 0531 6842", "2026-07-29 14:18", "-"], ["周雨桐", "137 0371 6624", "2026-07-28 09:42", "2026-07-30 11:08"], ["李明轩", "136 0206 3198", "2026-07-27 16:06", "-"], ["王诗涵", "138 0571 2860", "2026-07-27 11:32", "-"]];
+    const members = [
+      ["张语涵", "138 0108 4852", "2026-07-29 10:26", "-", "S3-京津冀服务中心", "S2-京津冀会员服务"],
+      ["陈思远", "139 0531 6842", "2026-07-29 14:18", "-", "S3-山东服务中心", "S2-山东会员服务"],
+      ["周雨桐", "137 0371 6624", "2026-07-28 09:42", "2026-07-30 11:08", "S3-华中服务中心", "S2-华中会员服务"],
+      ["李明轩", "136 0206 3198", "2026-07-27 16:06", "-", "S3-华南服务中心", "S2-华南会员服务"],
+      ["王诗涵", "138 0571 2860", "2026-07-27 11:32", "-", "S3-西部服务中心", "S2-西部会员服务"],
+      ["赵子涵", "139 0201 4452", "2026-07-26 10:21", "-", "S3-京津冀服务中心", "S2-京津冀会员服务"],
+      ["刘雨桐", "137 0998 3381", "2026-07-25 15:14", "2026-07-28 09:30", "S3-山东服务中心", "S2-山东会员服务"],
+      ["孙雅琪", "136 0551 6622", "2026-07-24 18:03", "-", "S3-华中服务中心", "S2-华中会员服务"],
+    ];
     const boundP3Names = ["乌兰察布区域一组", "赤峰区域一组", "同朔区域一组", "呼市区域一组", "西南区域一组"];
-    return <section className="line-detail-page"><div className="line-detail-page-head"><div><div className="line-breadcrumb"><button type="button" onClick={() => { setMemberDetailPage(null); resetDetailList(); }}>返回 S2业绩明细</button><i>/</i><button type="button" onClick={() => { setMemberDetailPage(null); resetDetailList(); }}>{memberDetailPage.s2Name}</button></div><h1>卓越家族会员明细</h1><p>{memberDetailPage.s2Name} 服务的卓越家族会员列表</p></div></div><section className="line-report-panel line-detail-list-panel"><div className="line-table-wrap"><table className="line-table member-table"><thead><tr>{["学员名称", "电话号码", "激活时间", "退款时间", "服务 S2", "归属 S3", "绑定 P3"].map(header => <th key={header}>{header}</th>)}</tr></thead><tbody>{members.map((member, index) => <tr key={member[1]}>{[...member, memberDetailPage.s2Name, memberDetailPage.s3Name, boundP3Names[index % boundP3Names.length]].map((cell, cellIndex) => <td className={cellIndex === 3 && cell !== "-" ? "line-refund" : ""} key={cellIndex}>{cell}</td>)}</tr>)}</tbody></table></div></section></section>;
+    const agentName = memberDetailPage.ownerName;
+    const p3Name = memberDetailPage.sourceParent || "-";
+    const isAgentMemberDetail = memberDetailPage.sourceLabel === "代理商";
+    const memberHeaders = isAgentMemberDetail
+      ? ["学员名称", "电话号码", "激活时间", "退款时间", "所属S3", "所属S2", "状态"]
+      : ["学员名称", "电话号码", "激活时间", "退款时间", "服务 S2", "归属 S3", "绑定 P3"];
+    const memberRows = members.map((member, index) => isAgentMemberDetail
+      ? {
+        name: member[0],
+        phone: member[1],
+        activatedAt: member[2],
+        refundAt: member[3],
+        p3: p3Name,
+        agent: agentName,
+        s3: member[4],
+        s2: member[5],
+        status: member[3] === "-" ? "已激活" : "已退款",
+      }
+      : [...member, memberDetailPage.ownerName, memberDetailPage.sourceParent || "-", boundP3Names[index % boundP3Names.length]]);
+    const filteredMemberRows = isAgentMemberDetail
+      ? memberRows.filter(row => {
+        const keywordMatch = [row.name, row.phone, row.s3, row.s2].join(" ");
+        return (!memberNameKeyword || row.name.includes(memberNameKeyword))
+          && (!memberPhoneKeyword || row.phone.includes(memberPhoneKeyword))
+          && (memberS3Filter === "all" || row.s3 === memberS3Filter)
+          && (memberS2Filter === "all" || row.s2 === memberS2Filter)
+          && keywordMatch;
+      })
+      : memberRows;
+    const totalMemberPages = Math.max(1, Math.ceil(filteredMemberRows.length / memberPageSize));
+    const activeMemberPageNumber = Math.min(memberPageNumber, totalMemberPages);
+    const pagedMemberRows = filteredMemberRows.slice((activeMemberPageNumber - 1) * memberPageSize, activeMemberPageNumber * memberPageSize);
+    const memberDetailTools = isAgentMemberDetail
+      ? <div className="line-detail-tools member-detail-tools">
+        <label><span>学员姓名</span><input value={memberNameKeyword} onChange={event => { setMemberNameKeyword(event.target.value); setMemberPageNumber(1); }} placeholder="输入学员姓名"/></label>
+        <label><span>电话号码</span><input value={memberPhoneKeyword} onChange={event => { setMemberPhoneKeyword(event.target.value); setMemberPageNumber(1); }} placeholder="输入电话号码"/></label>
+        <label><span>所属S3</span><select value={memberS3Filter} onChange={event => { setMemberS3Filter(event.target.value); setMemberPageNumber(1); }}><option value="all">全部所属S3</option>{[...new Set(memberRows.map(row => row.s3))].map(item => <option value={item} key={item}>{item}</option>)}</select></label>
+        <label><span>所属S2</span><select value={memberS2Filter} onChange={event => { setMemberS2Filter(event.target.value); setMemberPageNumber(1); }}><option value="all">全部所属S2</option>{[...new Set(memberRows.map(row => row.s2))].map(item => <option value={item} key={item}>{item}</option>)}</select></label>
+        <button className="line-search-button" type="button" onClick={() => setMemberPageNumber(1)}>查询</button>
+        <button className="line-detail-reset" type="button" onClick={resetMemberDetailList}>重置</button>
+      </div>
+      : null;
+    return <section className="line-detail-page"><div className="line-detail-page-head"><div><div className="line-breadcrumb"><button type="button" onClick={() => { setMemberDetailPage(null); resetMemberDetailList(); }}>返回 {memberDetailPage.returnLabel}</button><i>/</i><button type="button" onClick={() => { setMemberDetailPage(null); resetMemberDetailList(); }}>{memberDetailPage.ownerName}</button></div><h1>卓越家族会员明细</h1><p>{memberDetailPage.ownerName} 服务的卓越家族会员列表</p></div></div><section className="line-report-panel line-detail-list-panel">{memberDetailTools}<div className="line-table-wrap"><table className="line-table member-table"><thead><tr>{memberHeaders.map(header => <th key={header}>{header}</th>)}</tr></thead><tbody>{isAgentMemberDetail ? pagedMemberRows.map((member, index) => <tr key={member.phone}>{[member.name, member.phone, member.activatedAt, member.refundAt, member.s3, member.s2, member.status].map((cell, cellIndex) => <td className={cellIndex === 3 && cell !== "-" ? "line-refund" : ""} key={cellIndex}>{cell}</td>)}</tr>) : memberRows.map((member, index) => <tr key={member[1]}>{member.map((cell, cellIndex) => <td className={cellIndex === 3 && cell !== "-" ? "line-refund" : ""} key={cellIndex}>{cell}</td>)}</tr>)}</tbody></table></div>{isAgentMemberDetail && <footer className="line-detail-pagination member-detail-pagination"><span>共 {filteredMemberRows.length} 条</span><label>每页 <select value={memberPageSize} onChange={event => { setMemberPageSize(Number(event.target.value)); setMemberPageNumber(1); }}><option value="5">5 条</option><option value="10">10 条</option><option value="20">20 条</option></select></label><button type="button" disabled={activeMemberPageNumber === 1} onClick={() => setMemberPageNumber(activeMemberPageNumber - 1)}>上一页</button>{Array.from({ length: totalMemberPages }, (_, index) => index + 1).map(page => <button type="button" className={page === activeMemberPageNumber ? "active" : ""} onClick={() => setMemberPageNumber(page)} key={page}>{page}</button>)}<button type="button" disabled={activeMemberPageNumber === totalMemberPages} onClick={() => setMemberPageNumber(activeMemberPageNumber + 1)}>下一页</button></footer>}</section></section>;
   }
   if (lineDetailPage) {
     const activeDetailPage = lineDetailPage.pages[lineDetailPage.pages.length - 1];
+    const isAgentDetailPage = activeDetailPage.mode === "agent";
     const detailLine = activeDetailPage.line;
-    const detailKey = detailRowKey[detailLine][activeDetailPage.level];
-    const detailRows = activeDetailPage.rows || lineReportRows[detailLine][detailKey] || [];
-    const detailFields = detailLine === "p"
-      ? pLinePlatformFields[activeDetailPage.level]
-      : { headers: [`${activeDetailPage.level}名称`, "手机号码", "下级数量"], values: (row, index) => [row[0], getSLinePhone(row, index), row[2]] };
-    const detailHeaders = [...detailFields.headers, "有效业绩", "激活数", "退款数", "日均业绩"];
-    const canDrillDetail = activeDetailPage.level === "P3" || Boolean(detailNextLevel[detailLine][activeDetailPage.level]);
-    const opensMemberDetail = detailLine === "s" && activeDetailPage.level === "S2";
-    const isSLineDetail = detailLine === "s";
-    const detailContactOptions = [...new Set(detailRows.map((row, index) => isSLineDetail ? getSLinePhone(row, index) : row[1]))];
-    const filteredDetailRows = detailRows.filter(row => {
-      const rowIndex = detailRows.indexOf(row);
-      const rowContact = isSLineDetail ? getSLinePhone(row, rowIndex) : row[1];
-      const keywordText = isSLineDetail ? [row[0], rowContact, row[2]].join(" ") : row.slice(0, 3).join(" ");
+    const detailKey = detailRowKey[detailLine]?.[activeDetailPage.level];
+    const detailRows = isAgentDetailPage
+      ? getLineAgentDetailRows(activeDetailPage.parentName)
+      : activeDetailPage.rows || lineReportRows[detailLine][detailKey] || [];
+    const detailFields = isAgentDetailPage
+      ? {
+        headers: lineAgentDetailColumns.map(column => column.label),
+        values: row => [
+          row.agentName,
+          row.phone,
+          row.identityTag,
+          row.effectivePerformance,
+          row.activationCount,
+          row.refundCount,
+          row.dailyAverage,
+          row.region,
+        ],
+      }
+      : detailLine === "p"
+        ? pLinePlatformFields[activeDetailPage.level]
+        : { headers: [`${activeDetailPage.level}名称`, "手机号码", "下级数量"], values: (row, index) => [row[0], getSLinePhone(row, index), row[2]] };
+    const detailHeaders = isAgentDetailPage
+      ? detailFields.headers
+      : [...detailFields.headers, "有效业绩", "激活数", "退款数", "日均业绩"];
+    const canDrillDetail = !isAgentDetailPage && Boolean(detailNextLevel[detailLine]?.[activeDetailPage.level]);
+    const opensMemberDetail = isAgentDetailPage || (detailLine === "s" && activeDetailPage.level === "S2");
+    const detailContactOptions = isAgentDetailPage
+      ? ["分院", "爱心大使"]
+      : [...new Set(detailRows.map((row, index) => detailLine === "s" ? getSLinePhone(row, index) : row[1]))];
+    const filteredDetailRows = detailRows.filter((row, index) => {
+      if (isAgentDetailPage) {
+        const keywordText = [row.agentName, row.phone, row.identityTag, row.region, row.p3, row.p3Owner, row.p3OwnerPhone, row.p4, row.p4Owner, row.p4OwnerPhone, row.p5, row.p5Owner, row.p5OwnerPhone].join(" ");
+        return (!detailKeyword || String(row.agentName || "").includes(detailKeyword))
+          && (!detailPhoneKeyword || String(row.phone || "").includes(detailPhoneKeyword))
+          && (detailOwner === "all" || row.identityTag === detailOwner)
+          && keywordText;
+      }
+      if (detailLine === "p" && ["P5", "P4"].includes(activeDetailPage.level)) {
+        const phoneValue = pLinePlatformFields[activeDetailPage.level].values(row, index)[2];
+        return (!detailKeyword || String(row[0] || "").includes(detailKeyword))
+          && (!detailOwnerKeyword || String(row[1] || "").includes(detailOwnerKeyword))
+          && (!detailPhoneKeyword || String(phoneValue || "").includes(detailPhoneKeyword));
+      }
+      const rowContact = detailLine === "s" ? getSLinePhone(row, index) : row[1];
+      const keywordText = detailLine === "s" ? [row[0], rowContact, row[2]].join(" ") : row.slice(0, 3).join(" ");
       return (!detailKeyword || keywordText.includes(detailKeyword)) && (detailOwner === "all" || rowContact === detailOwner);
     });
     const totalDetailPages = Math.max(1, Math.ceil(filteredDetailRows.length / detailPageSize));
     const activeDetailPageNumber = Math.min(detailPageNumber, totalDetailPages);
     const pagedDetailRows = filteredDetailRows.slice((activeDetailPageNumber - 1) * detailPageSize, activeDetailPageNumber * detailPageSize);
+    const detailActionLabel = isAgentDetailPage ? "查看详情" : opensMemberDetail ? "查看会员明细" : "查看详情";
+    const detailHeading = isAgentDetailPage ? `${activeDetailPage.parentName} - 代理商明细` : `${activeDetailPage.parentName} - ${activeDetailPage.level}业绩明细`;
+    const detailSubtitle = isAgentDetailPage ? "当前 P3 下属代理商列表" : `当前组织下属 ${activeDetailPage.level} 的业绩列表`;
+    const renderDetailCells = (row, rowIndex) => {
+      if (isAgentDetailPage) {
+        return detailFields.values(row, rowIndex);
+      }
+      return [...detailFields.values(row, rowIndex), row[3], row[4], row[5], Math.round(row[3] / 32)];
+    };
+    const detailTools = isAgentDetailPage
+      ? <div className="line-detail-tools">
+        <label><span>代理商名称</span><input value={detailKeyword} onChange={event => { setDetailKeyword(event.target.value); setDetailPageNumber(1); }} placeholder="输入代理商名称"/></label>
+        <label><span>手机号码</span><input value={detailPhoneKeyword} onChange={event => { setDetailPhoneKeyword(event.target.value); setDetailPageNumber(1); }} placeholder="输入手机号码"/></label>
+        <label><span>身份标签</span><select value={detailOwner} onChange={event => { setDetailOwner(event.target.value); setDetailPageNumber(1); }}><option value="all">全部身份标签</option>{detailContactOptions.map(contact => <option value={contact} key={contact}>{contact}</option>)}</select></label>
+        <button className="line-search-button" type="button" onClick={() => setDetailPageNumber(1)}>查询</button>
+        <button className="line-detail-reset" type="button" onClick={resetDetailList}>重置</button>
+      </div>
+      : detailLine === "p" && ["P5", "P4"].includes(activeDetailPage.level)
+        ? <div className="line-detail-tools">
+          <label><span>{activeDetailPage.level}</span><input value={detailKeyword} onChange={event => { setDetailKeyword(event.target.value); setDetailPageNumber(1); }} placeholder={`输入${activeDetailPage.level}`}/></label>
+          <label><span>{activeDetailPage.level}负责人</span><input value={detailOwnerKeyword} onChange={event => { setDetailOwnerKeyword(event.target.value); setDetailPageNumber(1); }} placeholder={`输入${activeDetailPage.level}负责人`}/></label>
+          <label><span>负责人电话</span><input value={detailPhoneKeyword} onChange={event => { setDetailPhoneKeyword(event.target.value); setDetailPageNumber(1); }} placeholder="输入负责人电话"/></label>
+          <button className="line-search-button" type="button" onClick={() => setDetailPageNumber(1)}>查询</button>
+          <button className="line-detail-reset" type="button" onClick={resetDetailList}>重置</button>
+        </div>
+        : <div className="line-detail-tools">
+        <label><span>{detailLine === "s" ? "组织/手机号" : "组织/负责人"}</span><input value={detailKeyword} onChange={event => { setDetailKeyword(event.target.value); setDetailPageNumber(1); }} placeholder={detailLine === "s" ? "输入组织或手机号" : "输入组织或负责人"}/></label>
+        <label><span>{detailLine === "s" ? "手机号码" : "负责人"}</span><select value={detailOwner} onChange={event => { setDetailOwner(event.target.value); setDetailPageNumber(1); }}><option value="all">{detailLine === "s" ? "全部手机号码" : "全部负责人"}</option>{detailContactOptions.map(contact => <option value={contact} key={contact}>{contact}</option>)}</select></label>
+        <button className="line-search-button" type="button" onClick={() => setDetailPageNumber(1)}>查询</button>
+        <button className="line-detail-reset" type="button" onClick={resetDetailList}>重置</button>
+      </div>;
     return <section className="line-detail-page">
-      <div className="line-detail-page-head"><div><div className="line-breadcrumb"><button type="button" onClick={() => { setLineDetailPage(null); resetDetailList(); }}>返回 {lineDetailPage.rootLine === "p" ? "P线业绩统计" : "S线业绩统计"}</button>{lineDetailPage.pages.map((page, index) => <React.Fragment key={`${page.line}-${page.parentName}-${page.level}`}><i>/</i><button type="button" onClick={() => { setLineDetailPage({ ...lineDetailPage, pages: lineDetailPage.pages.slice(0, index + 1) }); resetDetailList(); }}>{page.parentName}</button></React.Fragment>)}</div><h1>{activeDetailPage.parentName} - {activeDetailPage.level}业绩明细</h1><p>当前组织下属 {activeDetailPage.level} 的业绩列表</p></div></div>
-      <section className="line-report-panel line-detail-list-panel"><div className="line-detail-tools"><label><span>{isSLineDetail ? "组织/手机号" : "组织/负责人"}</span><input value={detailKeyword} onChange={event => { setDetailKeyword(event.target.value); setDetailPageNumber(1); }} placeholder={isSLineDetail ? "输入组织或手机号" : "输入组织或负责人"}/></label><label><span>{isSLineDetail ? "手机号码" : "负责人"}</span><select value={detailOwner} onChange={event => { setDetailOwner(event.target.value); setDetailPageNumber(1); }}><option value="all">{isSLineDetail ? "全部手机号码" : "全部负责人"}</option>{detailContactOptions.map(contact => <option value={contact} key={contact}>{contact}</option>)}</select></label><button className="line-search-button" type="button" onClick={() => setDetailPageNumber(1)}>查询</button><button className="line-detail-reset" type="button" onClick={resetDetailList}>重置</button></div><div className="line-table-wrap"><table className="line-table"><thead><tr>{detailHeaders.map(header => <th key={header}>{header}</th>)}<th>操作</th></tr></thead><tbody>{pagedDetailRows.map(row => <tr key={row[0]}>{[...detailFields.values(row, detailRows.indexOf(row)), row[3], row[4], row[5], Math.round(row[3] / 32)].map((cell, cellIndex) => <td className={cellIndex === detailFields.headers.length ? "line-amount" : cellIndex === detailFields.headers.length + 2 ? "line-refund" : ""} key={`${row[0]}-${cellIndex}`}>{cell}</td>)}<td>{(canDrillDetail || opensMemberDetail) && <button className="line-detail-button" type="button" onClick={() => opensMemberDetail ? openMemberDetailPage(row) : drillDetailPage(row)}>{opensMemberDetail ? "查看会员明细" : activeDetailPage.level === "P3" ? "查看绑定S3" : "查看详情"}</button>}</td></tr>)}{!pagedDetailRows.length && <tr><td colSpan={detailHeaders.length + 1} className="line-empty">暂无符合筛选条件的数据</td></tr>}</tbody></table></div><footer className="line-detail-pagination"><span>共 {filteredDetailRows.length} 条</span><label>每页 <select value={detailPageSize} onChange={event => { setDetailPageSize(Number(event.target.value)); setDetailPageNumber(1); }}><option value="5">5 条</option><option value="10">10 条</option><option value="20">20 条</option></select></label><button type="button" disabled={activeDetailPageNumber === 1} onClick={() => setDetailPageNumber(activeDetailPageNumber - 1)}>上一页</button>{Array.from({ length: totalDetailPages }, (_, index) => index + 1).map(page => <button type="button" className={page === activeDetailPageNumber ? "active" : ""} onClick={() => setDetailPageNumber(page)} key={page}>{page}</button>)}<button type="button" disabled={activeDetailPageNumber === totalDetailPages} onClick={() => setDetailPageNumber(activeDetailPageNumber + 1)}>下一页</button></footer></section>
+      <div className="line-detail-page-head"><div><div className="line-breadcrumb"><button type="button" onClick={() => { setLineDetailPage(null); resetDetailList(); }}>返回 P线业绩统计</button>{lineDetailPage.pages.map((page, index) => <React.Fragment key={`${page.line}-${page.parentName}-${page.level}-${page.mode || "base"}`}><i>/</i><button type="button" onClick={() => { setLineDetailPage({ ...lineDetailPage, pages: lineDetailPage.pages.slice(0, index + 1) }); resetDetailList(); }}>{page.parentName}</button></React.Fragment>)}</div><h1>{detailHeading}</h1><p>{detailSubtitle}</p></div></div>
+      <section className="line-report-panel line-detail-list-panel">{detailTools}<div className="line-table-wrap"><table className="line-table"><thead><tr>{detailHeaders.map(header => <th key={header}>{header}</th>)}<th>操作</th></tr></thead><tbody>{pagedDetailRows.map((row, rowIndex) => <tr key={isAgentDetailPage ? row.phone : row[0]}>{renderDetailCells(row, detailRows.indexOf(row)).map((cell, cellIndex) => <td className={isAgentDetailPage ? (cellIndex === 3 ? "line-amount" : cellIndex === 5 ? "line-refund" : "") : (cellIndex === detailFields.headers.length ? "line-amount" : cellIndex === detailFields.headers.length + 2 ? "line-refund" : "")} key={`${isAgentDetailPage ? row.phone : row[0]}-${cellIndex}`}>{cell}</td>)}<td>{(canDrillDetail || opensMemberDetail) && <button className="line-detail-button" type="button" onClick={() => opensMemberDetail ? openMemberDetailPage(row) : drillDetailPage(row)}>{detailActionLabel}</button>}</td></tr>)}{!pagedDetailRows.length && <tr><td colSpan={detailHeaders.length + 1} className="line-empty">暂无符合筛选条件的数据</td></tr>}</tbody></table></div><footer className="line-detail-pagination"><span>共 {filteredDetailRows.length} 条</span><label>每页 <select value={detailPageSize} onChange={event => { setDetailPageSize(Number(event.target.value)); setDetailPageNumber(1); }}><option value="5">5 条</option><option value="10">10 条</option><option value="20">20 条</option></select></label><button type="button" disabled={activeDetailPageNumber === 1} onClick={() => setDetailPageNumber(activeDetailPageNumber - 1)}>上一页</button>{Array.from({ length: totalDetailPages }, (_, index) => index + 1).map(page => <button type="button" className={page === activeDetailPageNumber ? "active" : ""} onClick={() => setDetailPageNumber(page)} key={page}>{page}</button>)}<button type="button" disabled={activeDetailPageNumber === totalDetailPages} onClick={() => setDetailPageNumber(activeDetailPageNumber + 1)}>下一页</button></footer></section>
     </section>;
   }
   return <section className="line-report-page">
-    <div className="line-report-title"><div><h1>P线 &amp; S线业绩统计报表</h1><p>卓越家族会员日激活量，退款按审核通过日扣减</p></div><span className="data-freshness">数据更新：T+1</span></div>
+    <div className="line-report-title"><div><h1>P线业绩统计报表</h1><p>卓越家族会员日激活量，退款按审核通过日扣减</p></div><span className="data-freshness">数据更新：T+1</span></div>
     <section className="line-report-filters">
       <div className="line-period-filter"><span>统计周期</span><div className="line-period-options">{[["yesterday", "昨日"], ["week", "本周"], ["month", "本月"], ["year", "本年"], ["calendar", "日历"]].map(([value, label]) => <button key={value} className={period === value ? "active" : ""} type="button" onClick={() => setPeriod(value)}>{label}</button>)}</div>{period === "calendar" && <div className="line-custom-date"><input type="date" defaultValue="2026-07-01"/><b>至</b><input type="date" defaultValue="2026-07-31"/></div>}</div>
       <label><span>所属大区</span><select value={region} onChange={event => setRegion(event.target.value)}><option>全部大区</option><option>华北大区</option><option>华中大区</option><option>华南大区</option><option>西部大区</option></select></label>
       <label><span>组织/人员</span><input value={keyword} onChange={event => setKeyword(event.target.value)} placeholder="输入组织或负责人"/></label>
       <button className="line-search-button" type="button">查询</button><button className="line-export-button" type="button" onClick={exportCurrent}>导出列表</button>
     </section>
-    <div className="line-report-tabs"><button type="button" className={line === "p" ? "active" : ""} onClick={() => switchLine("p")}>P线业绩统计</button><button type="button" className={line === "s" ? "active" : ""} onClick={() => switchLine("s")}>S线业绩统计</button></div>
     <section className="line-metric-grid">{lineReportMetrics[line].map(metric => <article className={`line-metric ${metric.tone || ""}`} key={metric.label}><span>{metric.label}</span><strong>{metric.value}</strong><small>{metric.note}</small></article>)}</section>
     <section className="line-content-grid">
       <LineReportTrend granularity={granularity} visibleSeries={visibleSeries} onToggleSeries={key => setVisibleSeries({ ...visibleSeries, [key]: !visibleSeries[key] })}/>
       <aside className="line-report-note"><span>统计口径</span><strong>有效业绩 = 激活数 - 退款数</strong><p>同一会员多次激活仅首次计入；退款只扣减一次。</p></aside>
     </section>
     <section className="line-report-panel line-table-panel">
-      <div className="line-panel-head"><div><h3>{line === "p" ? "P线层级业绩明细" : "S线层级业绩明细"}</h3><span>点击查看详情可下钻查看下级</span></div>{line === "s" && <div className="line-granularity">{["day", "week", "month"].map(item => <button type="button" className={granularity === item ? "active" : ""} onClick={() => setGranularity(item)} key={item}>{item === "day" ? "日" : item === "week" ? "周" : "月"}</button>)}</div>}</div>
-      <div className="line-breadcrumb"><button type="button" onClick={() => { setDrill([]); setMemberDetail(false); }}>{line === "p" ? "P线总览" : "S6总览"}</button>{drill.map((item, index) => <React.Fragment key={item}><i>/</i><button type="button" onClick={() => { setDrill(drill.slice(0, index + 1)); setMemberDetail(false); }}>{item}</button></React.Fragment>)}</div>
+      <div className="line-panel-head"><div><h3>P线层级业绩明细</h3><span>点击查看详情可下钻查看下级</span></div></div>
+      <div className="line-breadcrumb"><button type="button" onClick={() => { setDrill([]); }}>P线总览</button>{drill.map((item, index) => <React.Fragment key={item}><i>/</i><button type="button" onClick={() => { setDrill(drill.slice(0, index + 1)); }}>{item}</button></React.Fragment>)}</div>
       <div className="line-table-wrap"><table className="line-table"><thead><tr>{tableHeaders.map(header => <th key={header}>{header}</th>)}<th>操作</th></tr></thead><tbody>{rows.map((row, index) => <tr key={row[0]}>{tableCells(row, index).map((cell, cellIndex) => <td className={cellIndex === metadataHeaders.length ? "line-amount" : cellIndex === metadataHeaders.length + 2 ? "line-refund" : ""} key={`${row[0]}-${cellIndex}`}>{cell}</td>)}<td><button className="line-detail-button" type="button" onClick={() => openLineDetailPage(row)}>{currentLevel === "S2" ? "查看明细" : "查看详情"}</button></td></tr>)}{!rows.length && <tr><td colSpan={tableHeaders.length + 1} className="line-empty">暂无符合筛选条件的数据</td></tr>}</tbody></table></div>
     </section>
-    {line === "p" && drill.length === 0 && <section className="line-team-ranking-section">
+    {drill.length === 0 && <section className="line-team-ranking-section">
       <PTeamPerformanceRanking title="P5团队业绩排行" rows={p5RankingRows} nameKey="p5"/>
       <PTeamPerformanceRanking title="P4团队业绩排行" rows={p4RankingRows} nameKey="p4"/>
       <PTeamPerformanceRanking title="P3团队业绩排行" rows={p3RankingRows} nameKey="p3"/>
     </section>}
-    {line === "p" && currentLevel === "P3" && <section className="line-report-panel line-binding-panel"><div className="line-panel-head"><div><h3>绑定 S线业绩透视</h3><span>当前 P3 绑定的 S3 / S2 业绩贡献</span></div></div><div className="binding-list">{[["S3-京津冀服务中心", "2,184", "3 个 S2"], ["S3-山东服务中心", "1,560", "4 个 S2"], ["S3-河南服务中心", "1,128", "2 个 S2"]].map(item => <div key={item[0]}><span>{item[0]}</span><small>{item[2]}</small><strong>{item[1]}</strong><button type="button" onClick={() => setMemberDetail(true)}>查看 S2</button></div>)}</div></section>}
-    {memberDetail && <section className="line-report-panel member-detail-panel"><div className="line-panel-head"><div><h3>服务会员明细</h3><span>最多可导出 100,000 行</span></div><button className="line-export-button" type="button" onClick={exportCurrent}>导出 Excel</button></div><div className="line-table-wrap"><table className="line-table member-table"><thead><tr><th>会员 ID</th><th>会员名称</th><th>激活时间</th><th>退款时间</th><th>服务 S2</th><th>归属 S3</th><th>状态</th></tr></thead><tbody>{[["JF202607001", "张语涵", "2026-07-29 10:26", "-", "S2-京津冀会员服务", "S3-华北服务中心", "已激活"], ["JF202607002", "陈思远", "2026-07-29 14:18", "-", "S2-山东会员服务", "S3-华北服务中心", "已激活"], ["JF202607003", "周雨桐", "2026-07-28 09:42", "2026-07-30 11:08", "S2-河南会员服务", "S3-华中服务中心", "已退款"]].map(row => <tr key={row[0]}>{row.map((cell, index) => <td className={index === 6 ? (cell === "已退款" ? "member-refunded" : "member-active") : ""} key={index}>{cell}</td>)}</tr>)}</tbody></table></div></section>}
   </section>;
 }
 
@@ -1324,7 +1509,7 @@ function Sidebar({ onOpenDashboard, onOpenLineReport, lineReportOpen }) {
 <a className="home">
 <i>⌂</i>首页</a>
 <div className="nav-group-title">数据展示 <b>⌃</b>
-  </div>{primary.map((item, i) => <a key={item} className={i === 0 ? "icon-nav" : item === "平台业绩" && !lineReportOpen ? "sub-nav selected" : "sub-nav"} role={item === "平台业绩" ? "button" : undefined} tabIndex={item === "平台业绩" ? 0 : undefined} onClick={item === "平台业绩" ? onOpenDashboard : undefined}>{i === 0 && <i>◆</i>}{item}</a>)}{secondary.map((item, i) => <a key={item} className={i === 0 ? "icon-nav" : "sub-nav"}>{i === 0 && <i>▣</i>}{item}</a>)}<a className={`icon-nav line-report-nav ${lineReportOpen ? "selected" : ""}`} role="button" tabIndex={0} onClick={onOpenLineReport}><i>▣</i>P线 &amp; S线业绩统计报表</a></nav>
+  </div>{primary.map((item, i) => <a key={item} className={i === 0 ? "icon-nav" : item === "平台业绩" && !lineReportOpen ? "sub-nav selected" : "sub-nav"} role={item === "平台业绩" ? "button" : undefined} tabIndex={item === "平台业绩" ? 0 : undefined} onClick={item === "平台业绩" ? onOpenDashboard : undefined}>{i === 0 && <i>◆</i>}{item}</a>)}{secondary.map((item, i) => <a key={item} className={i === 0 ? "icon-nav" : "sub-nav"}>{i === 0 && <i>▣</i>}{item}</a>)}<a className={`icon-nav line-report-nav ${lineReportOpen ? "selected" : ""}`} role="button" tabIndex={0} onClick={onOpenLineReport}><i>▣</i>P线业绩统计报表</a></nav>
 <div className="bottom-nav">
 <a>
 <i>◆</i>艺博士 <b>⌄</b>
@@ -1378,7 +1563,7 @@ export function App() {
   const detailTypeMatch = rankingType.match(/^(p[345])-agent-detail$/);
   const isOrderDetail = rankingType === "agent-order-detail";
   const pageTabs = isLineReport
-    ? [{ label: "首页", view: "dashboard" }, { label: "P线 & S线业绩统计报表 ×", view: "line-report" }]
+    ? [{ label: "首页", view: "dashboard" }, { label: "P线业绩统计报表 ×", view: "line-report" }]
     : isRanking
     ? (rankingType === "agent"
       ? [
@@ -1420,7 +1605,7 @@ export function App() {
 <span className="hamburger">☰</span>
 <b>首页</b>
 <i>/</i>
-<span>{isLineReport ? "P线 & S线业绩统计报表" : isRanking ? rankingConfig.pageLabel : "业绩统计报表"}</span>
+<span>{isLineReport ? "P线业绩统计报表" : isRanking ? rankingConfig.pageLabel : "业绩统计报表"}</span>
 </div>
 <div className="top-actions">
 <button>切换系统</button>

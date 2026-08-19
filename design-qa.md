@@ -15,7 +15,10 @@
 - Dashboard agent ranking card style: the `分院统计`, `爱心大使统计`, and `代理商全国排行` cards use the same card shell, title area, divider, list rhythm, and progress-bar treatment.
 - Dashboard summary ranking rows: the `分院统计` and `爱心大使统计` progress rows now match `代理商全国排行` with left-aligned rank number, name, progress track, and right-side amount.
 - P/S line trend width: the `业绩趋势` chart now occupies the full content row, the `统计口径` note is moved below as a compact strip, and the SVG plotting area uses a wider coordinate system so the trend lines spread horizontally.
-- P-line binding drilldown: `P线层级业绩明细 → P3 → 查看绑定S3` now maps current P3 names to S3 rows and falls back to S3 data, so the flow can continue through `S3业绩明细 → S2业绩明细 → 会员明细`.
+- P-line report simplification: the standalone `S线业绩统计` tab/switch has been removed. Navigation, browser tab, breadcrumb, and page heading now show only `P线业绩统计报表`.
+- P-line P3 drilldown: `P线层级业绩明细 → P3 → 查看详情` now opens `代理商明细`, showing `代理商名称/手机号码/身份标签/业绩/归属` fields, and its `查看详情` button opens the existing `卓越家族会员明细`.
+- Agent detail filter/columns: `代理商明细` uses only `代理商名称 / 手机号码 / 身份标签` as filters, removes `所属分院`, and keeps only the core columns plus `所属大区`.
+- Agent member detail: `卓越家族会员明细` now shows only `学员姓名 / 电话号码 / 所属S3 / 所属S2` filters, and includes pagination controls below the table.
 - S-line drilldown fields: `S3业绩明细` and `S2业绩明细` show `S3/S2名称 + 手机号码 + 下级数量` instead of负责人名称, and the detail filters use phone-number wording for S-line pages.
 - Dashboard section-title cleanup: the section labels `总业绩统计`, `P团队业绩`, and `排行数据` are hidden/removed so their content appears directly, while the `代理商业绩` module label remains.
 - Dashboard total KPI style: the top `总业绩` card uses the same white-card visual language as the page: light border, subtle shadow, small blue marker, centered `总业绩统计` primary amount block with a 36px red amount, and a centered two-column bottom summary bar for compare and growth rate to avoid the previous boxed/form-like look.
