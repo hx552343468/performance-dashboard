@@ -16,9 +16,9 @@ Favor a restrained, professional enterprise-dashboard look: pale grey canvas, wh
 
 Use a polished, presentation-ready finish: consistent section rhythm, light data-card dividers, and subtle hover elevation only where it reinforces an interactive card.
 
-## P/S Line Performance Report
+## P Line Performance Report
 
-The P/S line performance report follows the platform-performance drill-down convention. P-line hierarchy is region to P5 to P4 to P3, with P3 binding views for S3/S2 contributions. S-line hierarchy is S6 to S3 to S2 to S1, with service member detail available from S2.
+The P line performance report follows the platform-performance drill-down convention. P-line hierarchy is region to P5 to P4 to P3, then P3 drills into the agent list, and the agent list drills into 卓越家族会员明细.
 
 ## Default landing page
 

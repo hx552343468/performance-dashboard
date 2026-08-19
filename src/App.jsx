@@ -1129,8 +1129,8 @@ const pLinePlatformFields = {
     values: (row, index) => [row[0], row[1], ["138 0101 2368", "139 0531 8132", "137 0371 6624", "136 0108 4527", "138 0281 9135", "139 0771 5082", "138 9910 7201", "137 0791 4028"][index]],
   },
   P3: {
-    headers: ["P3", "P3负责人", "负责人电话", "所属 P4", "P4负责人", "所属 P5", "P5负责人", "绑定 S3"],
-    values: (row, index) => [row[0], row[1], ["136 0108 4852", "138 0108 5704", "139 0531 6842"][index], ["乌兰察布区域", "乌兰察布区域", "赤峰区域"][index], ["孙菲", "孙菲", "李楠"][index], ["惠赣区域", "惠赣区域", "惠赣区域"][index], "梁丽红", row[2]],
+    headers: ["P3", "P3负责人", "负责人电话"],
+    values: (row, index) => [row[0], row[1], ["136 0108 4852", "138 0108 5704", "139 0531 6842"][index]],
   },
 };
 
@@ -1285,7 +1285,7 @@ function LinePerformanceReport() {
     s: { S6: "S3", S3: "S2", S2: "S2" },
   };
   const detailNextLevel = {
-    p: { P5: "P4", P4: "P3" },
+    p: { P5: "P4", P4: "P3", P3: "P3" },
     s: { S3: "S2" },
   };
   const detailRowKey = {
@@ -1305,7 +1305,7 @@ function LinePerformanceReport() {
     const childLevel = detailNextLevel[activePage.line]?.[activePage.level];
     if (!childLevel) return;
     const childPage = { line: childLine, parentName: row[0], level: childLevel };
-    if (childLevel === "P3") childPage.mode = "agent";
+    if (activePage.line === "p" && activePage.level === "P3") childPage.mode = "agent";
     setLineDetailPage({ ...lineDetailPage, pages: [...lineDetailPage.pages, childPage] });
     resetDetailList();
   };
@@ -1417,7 +1417,7 @@ function LinePerformanceReport() {
           && (detailOwner === "all" || row.identityTag === detailOwner)
           && keywordText;
       }
-      if (detailLine === "p" && ["P5", "P4"].includes(activeDetailPage.level)) {
+      if (detailLine === "p" && ["P5", "P4", "P3"].includes(activeDetailPage.level)) {
         const phoneValue = pLinePlatformFields[activeDetailPage.level].values(row, index)[2];
         return (!detailKeyword || String(row[0] || "").includes(detailKeyword))
           && (!detailOwnerKeyword || String(row[1] || "").includes(detailOwnerKeyword))
@@ -1447,7 +1447,7 @@ function LinePerformanceReport() {
         <button className="line-search-button" type="button" onClick={() => setDetailPageNumber(1)}>查询</button>
         <button className="line-detail-reset" type="button" onClick={resetDetailList}>重置</button>
       </div>
-      : detailLine === "p" && ["P5", "P4"].includes(activeDetailPage.level)
+      : detailLine === "p" && ["P5", "P4", "P3"].includes(activeDetailPage.level)
         ? <div className="line-detail-tools">
           <label><span>{activeDetailPage.level}</span><input value={detailKeyword} onChange={event => { setDetailKeyword(event.target.value); setDetailPageNumber(1); }} placeholder={`输入${activeDetailPage.level}`}/></label>
           <label><span>{activeDetailPage.level}负责人</span><input value={detailOwnerKeyword} onChange={event => { setDetailOwnerKeyword(event.target.value); setDetailPageNumber(1); }} placeholder={`输入${activeDetailPage.level}负责人`}/></label>
