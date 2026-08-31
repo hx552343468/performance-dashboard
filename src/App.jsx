@@ -400,7 +400,7 @@ const rankingConfigs = {
     heading: "代理商排行",
     subTab: "代理商排行",
     showExport: true,
-    minWidth: 4828,
+    minWidth: 2680,
     rows: agentRankingRows,
     baseFilters: [
       { key: "agentName", label: "代理商名称", placeholder: "请输入代理商名称或手机号", type: "input" },
@@ -434,30 +434,6 @@ const rankingConfigs = {
       { key: "p5Owner", label: "所属P5负责人", width: "150px" },
       { key: "p5OwnerPhone", label: "所属P5负责人电话", width: "170px", phone: true },
       { key: "amount", label: "业绩总额（￥）", width: "150px" },
-      { key: "selfStockCourseCard", label: "囤课程卡", width: "104px", group: "agentSelf" },
-      { key: "selfStockBenefitCard", label: "囤权益卡", width: "104px", group: "agentSelf" },
-      { key: "selfConsumeCourseCard", label: "消费课程卡", width: "104px", group: "agentSelf" },
-      { key: "selfConsumeProfessionalCourse", label: "消费专业课", width: "104px", group: "agentSelf" },
-      { key: "selfConsumeCamp", label: "消费陪学营", width: "104px", group: "agentSelf" },
-      { key: "selfConsumeOfflineCourse", label: "消费线下课", width: "104px", group: "agentSelf" },
-      { key: "studentStockCourseCard", label: "囤课程卡", width: "104px", group: "normalStudent" },
-      { key: "studentStockBenefitCard", label: "囤权益卡", width: "104px", group: "normalStudent" },
-      { key: "studentConsumeCourseCard", label: "消费课程卡", width: "104px", group: "normalStudent" },
-      { key: "studentConsumeBenefitCard", label: "消费权益卡", width: "104px", group: "normalStudent" },
-      { key: "studentConsumeProfessionalCourse", label: "消费专业课", width: "104px", group: "normalStudent" },
-      { key: "studentConsumeCamp", label: "消费陪学营", width: "104px", group: "normalStudent" },
-      { key: "studentConsumeOfflineCourse", label: "消费线下课", width: "104px", group: "normalStudent" },
-      { key: "directStockCourseCard", label: "囤课程卡", width: "104px", group: "directAgent" },
-      { key: "directStockBenefitCard", label: "囤权益卡", width: "104px", group: "directAgent" },
-      { key: "directConsumeCourseCard", label: "消费课程卡", width: "104px", group: "directAgent" },
-      { key: "directConsumeProfessionalCourse", label: "消费专业课", width: "104px", group: "directAgent" },
-      { key: "directConsumeCamp", label: "消费陪学营", width: "104px", group: "directAgent" },
-      { key: "directConsumeOfflineCourse", label: "消费线下课", width: "104px", group: "directAgent" },
-    ],
-    columnGroups: [
-      { key: "agentSelf", label: "代理商本人（企业账户￥）" },
-      { key: "normalStudent", label: "代理商名下普通学员（￥）" },
-      { key: "directAgent", label: "代理商直推代理商（课程券￥）" },
     ],
   },
 };
@@ -816,10 +792,11 @@ function RankingPage({ type, config: providedConfig, onOpenOrgDetail, onOpenAgen
 
   if (isAgentTable) {
     const standaloneColumns = config.columns.filter(column => !column.group);
-    const groupedColumnSections = config.columnGroups.map(group => ({
+    const groupedColumnSections = (config.columnGroups || []).map(group => ({
       ...group,
       columns: config.columns.filter(column => column.group === group.key),
     }));
+    const hasGroupedColumns = groupedColumnSections.length > 0;
 
     return <section className="ranking-page ranking-page-agent">
       <div className="ranking-period">统计周期:2026-07-01至2026-07-31</div>
@@ -853,13 +830,11 @@ function RankingPage({ type, config: providedConfig, onOpenOrgDetail, onOpenAgen
           <table className="ranking-table ranking-table-agent" style={{ minWidth: `${config.minWidth}px` }}>
             <thead>
               <tr>
-                {standaloneColumns.map(column => <th key={column.key} rowSpan={2} style={{ width: column.width }}>{column.label}</th>)}
-                {groupedColumnSections.map(group => <th key={group.key} colSpan={group.columns.length} className="ranking-group-title">{group.label}</th>)}
-                <th className="ranking-sticky-action" rowSpan={2} style={{ width: "112px" }}>操作</th>
+                {standaloneColumns.map(column => <th key={column.key} rowSpan={hasGroupedColumns ? 2 : 1} style={{ width: column.width }}>{column.label}</th>)}
+                {hasGroupedColumns && groupedColumnSections.map(group => <th key={group.key} colSpan={group.columns.length} className="ranking-group-title">{group.label}</th>)}
+                <th className="ranking-sticky-action" rowSpan={hasGroupedColumns ? 2 : 1} style={{ width: "112px" }}>操作</th>
               </tr>
-              <tr>
-                {groupedColumnSections.flatMap(group => group.columns).map(column => <th key={column.key} style={{ width: column.width }}>{column.label}</th>)}
-              </tr>
+              {hasGroupedColumns && <tr>{groupedColumnSections.flatMap(group => group.columns).map(column => <th key={column.key} style={{ width: column.width }}>{column.label}</th>)}</tr>}
             </thead>
             <tbody>
               {visibleRows.map(row => <tr key={row.rank}>
